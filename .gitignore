@@ -1,0 +1,12 @@
+/.idea
+project-boggle/build
+project-boggle/.gradle
+/bin/
+.DS_Store
+Ressources/.DS_Store
+Ressources/Dictionnaire/.DS_Store
+src/.DS_Store
+src/Test/.DS_Store
+project-server/build
+project-server/.gradle
+.gradle
