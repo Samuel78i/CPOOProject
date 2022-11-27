@@ -1,6 +1,5 @@
 package com.example.projectgame.launch;
 
-import com.example.projectgame.controller.GameController;
 import com.example.projectgame.controller.HomeController;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

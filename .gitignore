@@ -1,6 +1,6 @@
 /.idea
-project-boggle/build
-project-boggle/.gradle
+project-game/build
+project-game/.gradle
 /bin/
 .DS_Store
 Ressources/.DS_Store

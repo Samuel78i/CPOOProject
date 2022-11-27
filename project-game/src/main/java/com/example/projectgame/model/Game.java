@@ -24,7 +24,7 @@ public class Game {
         difficulty = d;
         loadDictionary();
         //makeMeAGoodSentence();
-        sentence = "sam";
+        sentence = "bonjour␣a␣tous␣les␣amis";
     }
 
     private void loadDictionary() {
