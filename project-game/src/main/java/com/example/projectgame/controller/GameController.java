@@ -56,24 +56,16 @@ public class GameController {
         area.setLayoutX(103);
         area.setLayoutY(116);
         area.setPrefSize(400, 150);
-        area.setOnKeyTyped((this::keyPressed));
-        area.setOnKeyPressed((this::keyPressed));
         area.setOnKeyReleased((this::keyReleased));
         area.setFocusTraversable(true);
         area.requestFocus();
         area.displaceCaret(0);
         // to cancel character-removing keys
         area.addEventFilter(KeyEvent.KEY_PRESSED, Event::consume);
+        // to cancel character keys
+        area.addEventFilter(KeyEvent.KEY_TYPED, Event::consume);
         anchor.getChildren().add(area);
     }
-
-    protected void keyPressed(KeyEvent event){
-        if(!(event.getCharacter().equals("\u0008") || event.getCharacter().equals("\u007F"))) {
-            area.displaceCaret(gameSentence.length());
-            area.deleteNextChar();
-        }
-    }
-
     @FXML
     protected void keyReleased(KeyEvent event) {
         if(event.getText().equals(""+gameSentence.charAt(currentLetter)) || (event.getText().equals("\u0020") && (""+gameSentence.charAt(currentLetter)).equals("␣"))){
@@ -82,17 +74,16 @@ public class GameController {
             updateVisualsBecauseIsRight();
             isTheGameOverQuestionMark();
         }else if(event.getCode() == KeyCode.BACK_SPACE || event.getCode() == KeyCode.DELETE){
-            updateVisualsForBackspace();
+            if(badLetterCounter > 0){
+                badLetterCounter--;
+            }
+            updateVisualsBecauseIsWrongOrBackspace();
         }else{
             badLetterCounter++;
-            updateVisualsBecauseIsWrong();
+            updateVisualsBecauseIsWrongOrBackspace();
         }
     }
 
-
-    private void updateVisualsForBackspace() {
-        //TODO
-    }
     private void updateVisualsBecauseIsRight() {
         area.setStyle(0, 0, currentLetter, "-fx-fill: #00FF00");
         if(currentLetter < gameSentence.length()) {
@@ -102,8 +93,9 @@ public class GameController {
 
     }
 
-    private void updateVisualsBecauseIsWrong() {
+    private void updateVisualsBecauseIsWrongOrBackspace() {
         area.setStyle(0, currentLetter, currentLetter + badLetterCounter, "-fx-fill: #FF0000");
+        area.setStyle(0, currentLetter + badLetterCounter, gameSentence.length(), "-fx-fill: #000000");
         area.displaceCaret(currentLetter+badLetterCounter);
     }
 
