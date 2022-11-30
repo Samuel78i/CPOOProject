@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -20,6 +21,8 @@ import org.fxmisc.richtext.InlineCssTextArea;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -45,8 +48,15 @@ public class GameController {
     private InlineCssTextArea area;
 
     private String gameSentence;
+
+    //Counters
     private int currentLetter;
     private int badLetterCounter = 0;
+    private int wrongLetterBeforeSpace = 0;
+    private int validatedWords = 0;
+
+
+    private int speed;
 
 
     public GameController(FxWeaver fxWeaver, RestTemplate restTemplate) {
@@ -62,7 +72,7 @@ public class GameController {
         game = new Game(1);
         gameSentence = game.getSentence();
         area = new InlineCssTextArea();
-        area.setEditable(false);
+        area.setDisable(true);
         AnimateText(area, gameSentence);
         area.setLayoutX(103);
         area.setLayoutY(116);
@@ -70,12 +80,14 @@ public class GameController {
         area.setOnKeyReleased((this::keyReleased));
         area.setFocusTraversable(true);
         area.requestFocus();
-        area.displaceCaret(0);
+
+
         // to cancel character-removing keys
         area.addEventFilter(KeyEvent.KEY_PRESSED, Event::consume);
         // to cancel character keys
         area.addEventFilter(KeyEvent.KEY_TYPED, Event::consume);
-
+        //to cancel clicks
+        area.addEventFilter(MouseEvent.ANY, Event::consume);
 
         time = new Timer();
         stage.setOnCloseRequest(event -> time.cancel());
@@ -85,15 +97,29 @@ public class GameController {
 
     public void starting() {
         totalTime = 180;
-
+        speed = 7;
         TimerTask timertask = new TimerTask() {
             @Override
             public void run() {
                 Platform.runLater(() -> {
-                    long min = 0;
-                    long sec = 0;
+                    //update time
                     ConvertTime(totalTime);
                     totalTime--;
+                    //adding a word
+                    if(totalTime%speed == 0){
+                        game.addAWord();
+                        gameSentence += game.getLastWord();
+                        if(game.isTheLastWordAHeal()){
+
+                        }
+                        area.replaceText(gameSentence);
+                        area.setStyle(0, 0, currentLetter, "-fx-fill: #00FF00");
+                        area.setStyle(0, currentLetter, currentLetter + badLetterCounter, "-fx-fill: #FF0000");
+                        area.setStyle(0, currentLetter + badLetterCounter, gameSentence.length(), "-fx-fill: #000000");
+                        area.displaceCaret(currentLetter+ badLetterCounter);
+                    }
+
+                    //timer over
                     if (totalTime < 0) {
                         time.cancel();
                         timerLabel.setText("TIME OVER !");
@@ -122,14 +148,20 @@ public class GameController {
 
     @FXML
     protected void keyReleased(KeyEvent event) {
-        if(event.getText().equals("\u0020") && (""+gameSentence.charAt(currentLetter)).equals("␣")){
+        if(event.getText().equals("\u0020") && (""+gameSentence.charAt(currentLetter + badLetterCounter)).equals("␣")){
             currentLetter++;
             game.aWordHasBeenValidate(badLetterCounter, currentLetter);
+            validatedWords++;
+            if(validatedWords == 100){
+                speed--;
+                validatedWords=0;
+            }
             badLetterCounter = 0;
             currentLetter = 0;
+            wrongLetterBeforeSpace = 0;
             isTheGameOverQuestionMark();
             updateVisualsBecauseWordValidate();
-        }else if(event.getText().equals(""+gameSentence.charAt(currentLetter))){
+        }else if(event.getText().equals(""+gameSentence.charAt(currentLetter + badLetterCounter))){
             currentLetter++;
             badLetterCounter= 0;
             updateVisualsBecauseIsRight();
@@ -138,8 +170,16 @@ public class GameController {
             if(badLetterCounter > 0){
                 badLetterCounter--;
             }
+            if(wrongLetterBeforeSpace > 0) {
+                gameSentence = gameSentence.substring(0, currentLetter + badLetterCounter)+ gameSentence.substring(currentLetter + badLetterCounter + 1);
+                wrongLetterBeforeSpace--;
+            }
             updateVisualsBecauseIsWrongOrBackspace();
         }else{
+            if (("" + gameSentence.charAt(currentLetter + badLetterCounter)).equals("␣")) {
+                gameSentence = gameSentence.substring(0, currentLetter + badLetterCounter) + event.getText() + gameSentence.substring(currentLetter + badLetterCounter);
+                wrongLetterBeforeSpace++;
+            }
             badLetterCounter++;
             updateVisualsBecauseIsWrongOrBackspace();
         }
@@ -161,6 +201,8 @@ public class GameController {
     }
 
     private void updateVisualsBecauseIsWrongOrBackspace() {
+        area.replaceText(gameSentence);
+        area.setStyle(0, 0, currentLetter, "-fx-fill: #00FF00");
         area.setStyle(0, currentLetter, currentLetter + badLetterCounter, "-fx-fill: #FF0000");
         area.setStyle(0, currentLetter + badLetterCounter, gameSentence.length(), "-fx-fill: #000000");
         area.displaceCaret(currentLetter+badLetterCounter);
@@ -169,6 +211,7 @@ public class GameController {
 
     private void isTheGameOverQuestionMark(){
         if(currentLetter == gameSentence.length() || game.getLives() <= 0 || timerLabel.getText().equals("TIME OVER !")){
+            time.cancel();
             ReplayController replayController = fxWeaver.loadController(ReplayController.class);
             //endController.setUser(user);
             replayController.show();
@@ -188,7 +231,7 @@ public class GameController {
                 area.replaceText(descImp.substring(0, n));
             }
         };
-        animation.setOnFinished(e -> area.setEditable(true));
+        animation.setOnFinished(e -> area.setDisable(false));
         animation.play();
     }
 

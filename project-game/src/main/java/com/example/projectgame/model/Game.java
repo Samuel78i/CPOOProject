@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,6 +19,7 @@ public class Game {
     private final int difficulty;
 
     private int lives;
+    private boolean isTheLastWordAHeal = false;
 
     private String language;
     private List<String> dico;
@@ -75,6 +77,31 @@ public class Game {
 
     public void aWordHasBeenValidate(int badLetterCounter, int currentLetter) {
         lives -= badLetterCounter;
-        sentence = sentence.substring(currentLetter);
+        sentence = sentence.substring(currentLetter + badLetterCounter);
     }
+
+    public void addAWord(){
+        sentence+= "␣salut";
+        Random r = new Random();
+        int i = r.nextInt(3);
+        if (i ==0) {
+            isTheLastWordAHeal = true;
+        }
+    }
+
+    public String getLastWord() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for(int i = sentence.length()-1; i>0; i--){
+            if(sentence.charAt(i) == '␣'){
+                stringBuilder.append(sentence.charAt(i));
+                return stringBuilder.reverse().toString();
+            }else{
+                stringBuilder.append(sentence.charAt(i));
+            }
+        }
+        return stringBuilder.reverse().toString();
+    }
+
+
+    public boolean isTheLastWordAHeal(){return isTheLastWordAHeal;}
 }
