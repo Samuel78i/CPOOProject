@@ -17,6 +17,8 @@ public class Game {
     private String sentence = "";
     private final int difficulty;
 
+    private int lives;
+
     private String language;
     private List<String> dico;
 
@@ -25,6 +27,7 @@ public class Game {
         loadDictionary();
         //makeMeAGoodSentence();
         sentence = "bonjour␣a␣tous␣les␣amis";
+        lives = 10;
     }
 
     private void loadDictionary() {
@@ -60,4 +63,18 @@ public class Game {
         return sentence;
     }
 
+    public int getLives(){ return lives;}
+
+    public void plusOneLife(){
+        lives++;
+    }
+
+    public void minusOneLife(){
+        lives--;
+    }
+
+    public void aWordHasBeenValidate(int badLetterCounter, int currentLetter) {
+        lives -= badLetterCounter;
+        sentence = sentence.substring(currentLetter);
+    }
 }

@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 @FxmlView
-public class EndController {
+public class ReplayController {
     private final FxWeaver fxWeaver;
     private final RestTemplate restTemplate;
     private User user;
@@ -25,7 +25,7 @@ public class EndController {
     private AnchorPane anchor;
 
     @Autowired
-    public EndController(FxWeaver fxWeaver,
+    public ReplayController(FxWeaver fxWeaver,
                             RestTemplate restTemplate) {
         this.fxWeaver = fxWeaver;
         this.restTemplate = restTemplate;

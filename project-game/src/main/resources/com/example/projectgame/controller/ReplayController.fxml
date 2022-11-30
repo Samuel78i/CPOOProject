@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="anchor" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectgame.controller.EndController">
+<AnchorPane fx:id="anchor" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectgame.controller.ReplayController">
    <children>
       <Label layoutX="223.0" layoutY="146.0" prefHeight="98.0" prefWidth="228.0" text="Bien jouer bg" />
       <Button mnemonicParsing="false" onAction="#ButtonYes" text="Rejoue" />
