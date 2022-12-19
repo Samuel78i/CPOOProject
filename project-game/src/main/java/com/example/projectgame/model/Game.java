@@ -27,8 +27,8 @@ public class Game {
     public Game(int d){
         difficulty = d;
         loadDictionary();
-        //makeMeAGoodSentence();
-        sentence = "bonjour␣a␣tous␣les␣amis";
+        makeMeAGoodSentence();
+        //sentence = "bonjour␣a␣tous␣les␣amis";
         lives = 10;
     }
 
@@ -39,7 +39,7 @@ public class Game {
         try {
             URL resource = getClass().getClassLoader().getResource("Dictionaries/" + language + ".txt");
             Stream<String> lines = Files.lines(Path.of(resource.toURI()), StandardCharsets.UTF_8);
-            dico.addAll(lines.parallel().map(line -> removeAccent(line).toUpperCase()).collect(Collectors.toList()));
+            dico.addAll(lines.parallel().map(line -> removeAccent(line).toLowerCase()).collect(Collectors.toList()));
 
         } catch (IOException | URISyntaxException e) {
             System.out.println("Erreur de lecture");
@@ -53,9 +53,11 @@ public class Game {
     }
 
     public void makeMeAGoodSentence(){
-        for(int i = 0; i<10; i++){
+        for(int i = 0; i<5; i++){
             int randomNum = ThreadLocalRandom.current().nextInt(0, dico.size() + 1);
-            sentence += " ";
+            if(i!=0) {
+                sentence += "␣";
+            }
             sentence += dico.get(randomNum);
         }
     }
@@ -81,11 +83,14 @@ public class Game {
     }
 
     public void addAWord(){
-        sentence+= "␣salut";
-        Random r = new Random();
-        int i = r.nextInt(3);
-        if (i ==0) {
-            isTheLastWordAHeal = true;
+        int randomNum = ThreadLocalRandom.current().nextInt(0, dico.size() + 1);
+        sentence += "␣" + dico.get(randomNum);
+        if(!isTheLastWordAHeal) {
+            Random r = new Random();
+            int i = r.nextInt(3);
+            if (i == 0) {
+                isTheLastWordAHeal = true;
+            }
         }
     }
 

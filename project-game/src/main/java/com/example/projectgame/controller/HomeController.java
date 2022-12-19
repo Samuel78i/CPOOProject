@@ -1,6 +1,5 @@
 package com.example.projectgame.controller;
 
-import com.example.projectgame.model.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
@@ -18,8 +17,6 @@ public class HomeController {
     private final FxWeaver fxWeaver;
     private final RestTemplate restTemplate;
 
-    private User user;
-
     @FXML
     private AnchorPane anchor;
 
@@ -33,25 +30,18 @@ public class HomeController {
 
 
     @FXML
-    protected void play(ActionEvent actionEvent){
-        fxWeaver.loadController(GameController.class).show();
+    protected void connection(ActionEvent actionEvent) {
+        fxWeaver.loadController(UserConnectionController.class).show();
+
         Stage s = (Stage) anchor.getScene().getWindow();
         s.close();
     }
 
-//    @FXML
-//    protected void connection(ActionEvent actionEvent) {
-//        fxWeaver.loadController(UserConnectionController.class).show();
-//
-//        Stage s = (Stage) anchor.getScene().getWindow();
-//        s.close();
-//    }
-//
-//    @FXML
-//    protected void creation(ActionEvent actionEvent) {
-//        fxWeaver.loadController(NewUserController.class).show();
-//
-//        Stage s = (Stage) anchor.getScene().getWindow();
-//        s.close();
-//    }
+    @FXML
+    protected void creation(ActionEvent actionEvent) {
+        fxWeaver.loadController(UserCreationController.class).show();
+
+        Stage s = (Stage) anchor.getScene().getWindow();
+        s.close();
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.projectgame.controller;
 
 import com.example.projectgame.model.Game;
+import com.example.projectgame.model.Opponent;
 import com.example.projectgame.model.User;
 import javafx.animation.Animation;
 import javafx.animation.Transition;
@@ -21,8 +22,6 @@ import org.fxmisc.richtext.InlineCssTextArea;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +36,8 @@ public class GameController {
     private Stage stage;
     private User user;
 
+    private boolean online = false;
+
 
     @FXML
     private AnchorPane anchor;
@@ -44,9 +45,7 @@ public class GameController {
     private Label timerLabel;
     private Timer time;
     private long totalTime;
-
     private InlineCssTextArea area;
-
     private String gameSentence;
 
     //Counters
@@ -54,9 +53,9 @@ public class GameController {
     private int badLetterCounter = 0;
     private int wrongLetterBeforeSpace = 0;
     private int validatedWords = 0;
-
-
     private int speed;
+    private Opponent opponent;
+    private boolean isTheLastWordAHeal = false;
 
 
     public GameController(FxWeaver fxWeaver, RestTemplate restTemplate) {
@@ -110,7 +109,7 @@ public class GameController {
                         game.addAWord();
                         gameSentence += game.getLastWord();
                         if(game.isTheLastWordAHeal()){
-
+                            isTheLastWordAHeal = true;
                         }
                         area.replaceText(gameSentence);
                         area.setStyle(0, 0, currentLetter, "-fx-fill: #00FF00");
@@ -244,5 +243,8 @@ public class GameController {
         starting();
     }
 
-
+    public void setOnline(Opponent opponent) {
+        online = true;
+        this.opponent = opponent;
+    }
 }
