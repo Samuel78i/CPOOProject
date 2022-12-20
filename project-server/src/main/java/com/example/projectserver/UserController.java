@@ -77,14 +77,28 @@ public class UserController {
     }
 
     @PostMapping("/addScore")
-    public void addScore(@RequestParam String userName, @RequestParam int score) {
+    public void addScore(@RequestParam String name, @RequestParam int score) {
         UserSave save = UserSave.input();
-        if (save.existDeja(userName)) {
-            User user = save.getUser(userName);
+        if (save.existDeja(name)) {
+            User user = save.getUser(name);
             user.setScore(score);
             save.updateUser(user);
             save.output();
         }
+    }
+
+    @GetMapping("/isMyOpponentHere")
+    public Boolean isMyOpponentHere(@RequestParam String name,
+                                 @RequestParam Opponent opponent){
+        UserSave save = UserSave.input();
+        if (save.existDeja(name)) {
+            User user = save.getUser(name);
+            user.setWaitingOnOpponents(true);
+
+            User versus = save.getUser(opponent.getName());
+            return versus.isWaitingOnOpponents();
+        }
+        return false;
     }
 
 //    @PostMapping("/sendEmailToOpponent")

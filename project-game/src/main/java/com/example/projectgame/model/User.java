@@ -14,6 +14,8 @@ public class User {
     private double moyenne;
     private int bestScore;
     private List<Opponent> opponents;
+    private boolean waitingOnOpponents = false;
+
 
     public User(String n, String p) {
         name = n;
@@ -36,5 +38,13 @@ public class User {
 
     public List<Opponent> getOpponents() {
         return opponents;
+    }
+
+    public boolean isWaitingOnOpponents() {
+        return waitingOnOpponents;
+    }
+
+    public void setWaitingOnOpponents(boolean waitingOnOpponents) {
+        this.waitingOnOpponents = waitingOnOpponents;
     }
 }

@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.projectgame.controller.ChooseYourOpponentsController"
-            prefHeight="400.0" prefWidth="600.0">
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectgame.controller.ChooseYourOpponentsController">
+   <children>
+      <Button fx:id="back" layoutY="374.0" mnemonicParsing="false" onAction="#back" text="back" />
+      <ListView fx:id="opponentsList" layoutX="52.0" layoutY="100.0" prefHeight="200.0" prefWidth="200.0" />
+      <TextField fx:id="opponents" layoutX="387.0" layoutY="162.0" onAction="#validate" />
+      <Button layoutX="478.0" layoutY="188.0" mnemonicParsing="false" onAction="#validate" text="validate" />
+      <Label layoutX="387.0" layoutY="100.0" opacity="0.0" prefHeight="52.0" prefWidth="149.0" text="Wrong Username" textFill="#ff0101" />
+   </children>
 </AnchorPane>

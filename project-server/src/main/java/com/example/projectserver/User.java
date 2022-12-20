@@ -16,6 +16,7 @@ public final class User implements Serializable {
     private double moyenne;
     private int bestScore;
     private List<Opponent> opponents;
+    private boolean waitingOnOpponents = false;
 
     public User(String n, String p) {
         name = n;
@@ -86,6 +87,14 @@ public final class User implements Serializable {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public boolean isWaitingOnOpponents() {
+        return waitingOnOpponents;
+    }
+
+    public void setWaitingOnOpponents(boolean waitingOnOpponents) {
+        this.waitingOnOpponents = waitingOnOpponents;
     }
 
 }

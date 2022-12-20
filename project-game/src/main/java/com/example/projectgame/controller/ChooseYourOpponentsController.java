@@ -16,6 +16,7 @@ import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,9 +32,11 @@ public class ChooseYourOpponentsController {
     private Stage stage;
     private User user;
     @FXML
+    private ListView<Button> opponentsList;
+    @FXML
     private Label wrong;
     @FXML
-    private ListView<Button> opponentsList;
+    private Button back;
     @Value("${url}")
     private String url;
 
@@ -56,7 +59,7 @@ public class ChooseYourOpponentsController {
             if (!o.isTurn()) {
                 b = new Button(o.getName());
                 EventHandler<ActionEvent> event = e -> {
-                    //TODO : load until the opponent start the game also
+                    waitingForTheOpponent(o);
                     GameController gameController = fxWeaver.loadController(GameController.class);
                     gameController.setUser(user);
                     gameController.setOnline(o);
@@ -72,6 +75,18 @@ public class ChooseYourOpponentsController {
         }
     }
 
+    public void disableEveryButton(){
+        opponents.setDisable(true);
+        opponentsList.setDisable(true);
+        back.setDisable(true);
+    }
+
+    public void activateEveryButton(){
+        opponents.setDisable(false);
+        opponentsList.setDisable(false);
+        back.setDisable(false);
+    }
+
     @FXML
     public void initialize() {
         this.stage = new Stage();
@@ -85,6 +100,9 @@ public class ChooseYourOpponentsController {
         if (exist) {
             Opponent opponent = restTemplate.getForObject(url + "/addOpponent?userName={userName}&opponentName={opponentName}", Opponent.class, user.getName(), opponents.getText());
             user.addOpponents(opponent);
+
+            waitingForTheOpponent(opponent);
+
             GameController gameController = fxWeaver.loadController(GameController.class);
             gameController.setUser(user);
             gameController.setOnline(opponent);
@@ -94,6 +112,17 @@ public class ChooseYourOpponentsController {
             wrong.setOpacity(1);
             opponents.setText("");
         }
+    }
+
+    public void waitingForTheOpponent(Opponent o){
+        Boolean isMyOpponentHere = restTemplate.getForObject(
+                url + "/isMyOpponentHere?name={name}&opponent={opponent}", Boolean.class , user.getName(), o);
+        while(Boolean.FALSE.equals(isMyOpponentHere)){
+            disableEveryButton();
+            isMyOpponentHere = restTemplate.getForObject(
+                    url + "/isMyOpponentHere?name={name}&opponent={opponent}", Boolean.class , user.getName(), o);
+        }
+        activateEveryButton();
     }
 
     @FXML
