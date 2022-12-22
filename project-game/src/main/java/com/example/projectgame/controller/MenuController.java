@@ -1,8 +1,10 @@
 package com.example.projectgame.controller;
 
+import com.example.projectgame.model.Stat;
 import com.example.projectgame.model.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import net.rgielen.fxweaver.core.FxWeaver;
@@ -11,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @FxmlView
-public class ChooseGameModeController {
+public class MenuController {
     private final FxWeaver fxWeaver;
     private Stage stage;
 
@@ -19,8 +21,14 @@ public class ChooseGameModeController {
     private AnchorPane anchor;
     private User user;
 
-    public ChooseGameModeController(FxWeaver fxWeaver) {
+    public MenuController(FxWeaver fxWeaver) {
         this.fxWeaver = fxWeaver;
+    }
+
+    @FXML
+    public void initialize() {
+        this.stage = new Stage();
+        stage.setScene(new Scene(anchor));
     }
 
     @FXML
@@ -36,6 +44,14 @@ public class ChooseGameModeController {
         ChooseYourOpponentsController chooseYourOpponentsController = fxWeaver.loadController(ChooseYourOpponentsController.class);
         chooseYourOpponentsController.setUser(user);
         chooseYourOpponentsController.show();
+        stage.close();
+    }
+
+    @FXML
+    protected void buttonStat(ActionEvent event) {
+        StatsController statsController = fxWeaver.loadController(StatsController.class);
+        statsController.setUser(user);
+        statsController.show();
         stage.close();
     }
 

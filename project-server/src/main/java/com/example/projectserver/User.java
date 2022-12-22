@@ -10,26 +10,22 @@ import java.util.List;
 public final class User implements Serializable {
     private final String name;
     private final String password;
-    private int score;
-    private int numberOfGamesPlayed;
-    private int indiceLastScore;
-    private double moyenne;
-    private int bestScore;
     private List<Opponent> opponents;
     private boolean waitingOnOpponents = false;
+
+    private List<Stat> stats = new ArrayList<>();
+
 
     public User(String n, String p) {
         name = n;
         password = p;
         opponents = new ArrayList<>();
-        moyenne = 0;
     }
 
     public User() {
         name = "";
         password = "";
         opponents = new ArrayList<>();
-        moyenne = 0;
     }
 
     public String getName() {
@@ -40,38 +36,6 @@ public final class User implements Serializable {
         return password;
     }
 
-    public int getNumberOfGamesPlayed() {
-        return numberOfGamesPlayed;
-    }
-
-    public void setNumberOfGamesPlayed(int numberOfGamesPlayed) {
-        this.numberOfGamesPlayed = numberOfGamesPlayed;
-    }
-
-    public int getIndiceLastScore() {
-        return indiceLastScore;
-    }
-
-    public void setIndiceLastScore(int indiceLastScore) {
-        this.indiceLastScore = indiceLastScore;
-    }
-
-    public double getMoyenne() {
-        return moyenne;
-    }
-
-    public void setMoyenne(double moyenne) {
-        this.moyenne = moyenne;
-    }
-
-    public int getBestScore() {
-        return bestScore;
-    }
-
-    public void setBestScore(int bestScore) {
-        this.bestScore = bestScore;
-    }
-
     public List<Opponent> getOpponents() {
         return opponents;
     }
@@ -80,13 +44,12 @@ public final class User implements Serializable {
         this.opponents = opponents;
     }
 
-
-    public int getScore() {
-        return score;
+    public List<Stat> getStats() {
+        return stats;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setStats(List<Stat> stats) {
+        this.stats = stats;
     }
 
     public boolean isWaitingOnOpponents() {

@@ -19,9 +19,12 @@ import javafx.util.Duration;
 import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.fxmisc.richtext.InlineCssTextArea;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +48,7 @@ public class GameController {
     private Label timerLabel;
     private Timer time;
     private long totalTime;
+    private int howLongIsMyGameSupposedToLast;
     private InlineCssTextArea area;
     private String gameSentence;
 
@@ -56,6 +60,17 @@ public class GameController {
     private int speed;
     private Opponent opponent;
     private boolean isTheLastWordAHeal = false;
+
+    //stats
+    private int rightCharacterCounter = 0;
+    private float keyPressedCounter = 0;
+    private float WPM = 0;
+    private float precision = 0;
+    private int regularity = 0;
+    @Value("${url}")
+    private String url;
+
+
 
 
     public GameController(FxWeaver fxWeaver, RestTemplate restTemplate) {
@@ -96,6 +111,7 @@ public class GameController {
 
     public void starting() {
         totalTime = 180;
+        howLongIsMyGameSupposedToLast = (int) totalTime;
         speed = 7;
         TimerTask timertask = new TimerTask() {
             @Override
@@ -147,14 +163,24 @@ public class GameController {
 
     @FXML
     protected void keyReleased(KeyEvent event) {
+        keyPressedCounter++;
         if(event.getText().equals("\u0020") && (""+gameSentence.charAt(currentLetter + badLetterCounter)).equals("␣")){
             currentLetter++;
             game.aWordHasBeenValidate(badLetterCounter, currentLetter);
+            if(game.getLives() <= 0){
+                gameOver();
+            }
+
             validatedWords++;
             if(validatedWords == 100){
                 speed--;
                 validatedWords=0;
             }
+
+            if(currentLetter - badLetterCounter > 0){
+                rightCharacterCounter = currentLetter - badLetterCounter;
+            }
+
             badLetterCounter = 0;
             currentLetter = 0;
             wrongLetterBeforeSpace = 0;
@@ -210,12 +236,33 @@ public class GameController {
 
     private void isTheGameOverQuestionMark(){
         if(currentLetter == gameSentence.length() || game.getLives() <= 0 || timerLabel.getText().equals("TIME OVER !")){
-            time.cancel();
-            ReplayController replayController = fxWeaver.loadController(ReplayController.class);
-            //endController.setUser(user);
-            replayController.show();
-            stage.close();
+            gameOver();
         }
+    }
+
+    public void gameOver(){
+        updateStats();
+        time.cancel();
+        ReplayController replayController = fxWeaver.loadController(ReplayController.class);
+        replayController.setUser(user);
+        replayController.show();
+        stage.close();
+    }
+
+    public void updateStats(){
+        float l = howLongIsMyGameSupposedToLast - totalTime;
+        WPM = (rightCharacterCounter/l)/5;
+
+        precision = rightCharacterCounter/keyPressedCounter*100;
+        user.setStat(WPM, precision, regularity);
+
+        URI uri = null;
+        try {
+            uri = new URI(url + "/addScore?user={user}");
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        restTemplate.postForObject(uri, user, User.class);
     }
 
 

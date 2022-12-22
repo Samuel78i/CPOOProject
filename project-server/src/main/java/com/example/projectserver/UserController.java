@@ -77,11 +77,9 @@ public class UserController {
     }
 
     @PostMapping("/addScore")
-    public void addScore(@RequestParam String name, @RequestParam int score) {
+    public void addScore(@RequestBody User user) {
         UserSave save = UserSave.input();
-        if (save.existDeja(name)) {
-            User user = save.getUser(name);
-            user.setScore(score);
+        if (save.existDeja(user.getName())) {
             save.updateUser(user);
             save.output();
         }

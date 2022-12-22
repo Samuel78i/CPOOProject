@@ -87,10 +87,9 @@ public class UserConnectionController {
             userPassword.setText("");
         } else {
             name = username.getText();
-            //user.setUserSettings(new UserSettings());
-            GameController gameController = fxWeaver.loadController(GameController.class);
-            gameController.setUser(user);
-            gameController.show();
+            MenuController menuController = fxWeaver.loadController(MenuController.class);
+            menuController.setUser(user);
+            menuController.show();
 
             stage = (Stage) username.getScene().getWindow();
             stage.close();

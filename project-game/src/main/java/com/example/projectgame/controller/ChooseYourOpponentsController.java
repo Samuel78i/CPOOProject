@@ -16,7 +16,6 @@ import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -128,7 +127,7 @@ public class ChooseYourOpponentsController {
     @FXML
     protected void back() {
         try {
-            ChooseGameModeController chooseGameModeController = fxWeaver.loadController(ChooseGameModeController.class);
+            MenuController chooseGameModeController = fxWeaver.loadController(MenuController.class);
             chooseGameModeController.setUser(user);
             chooseGameModeController.show();
             stage.close();

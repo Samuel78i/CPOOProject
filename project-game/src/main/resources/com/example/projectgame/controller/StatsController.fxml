@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane fx:id="anchor" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectgame.controller.StatsController">
+   <children>
+      <Label layoutX="76.0" layoutY="60.0" prefHeight="17.0" prefWidth="61.0" text="Precision :" />
+      <Label layoutX="76.0" layoutY="22.0" prefHeight="17.0" prefWidth="158.0" text="Last Game Stats" />
+      <Label layoutX="407.0" layoutY="22.0" prefHeight="17.0" prefWidth="123.0" text="Overall Stats" />
+      <Label fx:id="lastGamePrecision" layoutX="149.0" layoutY="60.0" prefHeight="17.0" prefWidth="34.0" />
+      <Label layoutX="76.0" layoutY="148.0" prefHeight="17.0" prefWidth="61.0" text="Regularity :" />
+      <Label fx:id="lastGameRegularity" layoutX="149.0" layoutY="148.0" prefHeight="17.0" prefWidth="34.0" />
+      <Label layoutX="34.0" layoutY="235.0" prefHeight="17.0" prefWidth="103.0" text="Words Per Minute :" />
+      <Label fx:id="lastGameWPM" layoutX="138.0" layoutY="235.0" prefHeight="17.0" prefWidth="34.0" />
+      <Label layoutX="390.0" layoutY="60.0" prefHeight="17.0" prefWidth="61.0" text="Precision :" />
+      <Label layoutX="390.0" layoutY="140.0" prefHeight="17.0" prefWidth="61.0" text="Regularity :" />
+      <Label layoutX="348.0" layoutY="227.0" prefHeight="17.0" prefWidth="103.0" text="Words Per Minute :" />
+      <Label fx:id="overallPrecision" layoutX="469.0" layoutY="60.0" prefHeight="17.0" prefWidth="34.0" />
+      <Label fx:id="overallRegularity" layoutX="469.0" layoutY="140.0" prefHeight="17.0" prefWidth="34.0" />
+      <Label fx:id="overallWPM" layoutX="469.0" layoutY="227.0" prefHeight="17.0" prefWidth="34.0" />
+      <Button layoutX="-2.0" layoutY="366.0" mnemonicParsing="false" onAction="#back" prefHeight="40.0" prefWidth="72.0" text="Back" />
+   </children>
+</AnchorPane>

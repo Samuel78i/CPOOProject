@@ -14,9 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 @Component
 @FxmlView
 public class UserCreationController {
@@ -106,10 +103,9 @@ public class UserCreationController {
                 username.setText("");
                 userPassword.setText("");
             } else {
-                //user.setUserSettings(new UserSettings());
-                GameController gameController = fxWeaver.loadController(GameController.class);
-                gameController.setUser(user);
-                gameController.show();
+                MenuController menuController = fxWeaver.loadController(MenuController.class);
+                menuController.setUser(user);
+                menuController.show();
 
                 stage = (Stage) username.getScene().getWindow();
                 stage.close();
@@ -121,12 +117,6 @@ public class UserCreationController {
         }
     }
 
-    private boolean correctMail(String mail) {
-        Pattern pattern = Pattern.compile("[A-Za-z/d._%+-]+@[A-Za-z/d.-]+\\.[A-Za-z]{2,4}");
-        Matcher mat = pattern.matcher(mail);
-
-        return mat.matches();
-    }
 
 
     @FXML
