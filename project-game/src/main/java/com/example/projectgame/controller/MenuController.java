@@ -33,9 +33,9 @@ public class MenuController {
 
     @FXML
     protected void buttonSOLO() {
-        GameController gameController = fxWeaver.loadController(GameController.class);
-        gameController.setUser(user);
-        gameController.show();
+        SettingsController settingsController = fxWeaver.loadController(SettingsController.class);
+        settingsController.setUser(user);
+        settingsController.show();
         stage.close();
     }
 

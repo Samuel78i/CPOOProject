@@ -17,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 @FxmlView
 public class ReplayController {
     private final FxWeaver fxWeaver;
-    private final RestTemplate restTemplate;
     private User user;
     private Stage stage;
 
@@ -25,10 +24,8 @@ public class ReplayController {
     private AnchorPane anchor;
 
     @Autowired
-    public ReplayController(FxWeaver fxWeaver,
-                            RestTemplate restTemplate) {
+    public ReplayController(FxWeaver fxWeaver) {
         this.fxWeaver = fxWeaver;
-        this.restTemplate = restTemplate;
     }
 
     @FXML
@@ -39,15 +36,19 @@ public class ReplayController {
 
     @FXML
     protected void ButtonYes(ActionEvent event) {
-        try {
-            GameController gameController = fxWeaver.loadController(GameController.class);
-            gameController.setUser(user);
-            gameController.show();
+        GameController gameController = fxWeaver.loadController(GameController.class);
+        gameController.setUser(user);
+        gameController.show();
+        stage.close();
+    }
 
-            stage.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    @FXML
+    protected void menu(){
+        MenuController menuController = fxWeaver.loadController(MenuController.class);
+        user.resetSetting();
+        menuController.setUser(user);
+        menuController.show();
+        stage.close();
     }
 
 

@@ -38,7 +38,6 @@ public class GameController {
     private final RestTemplate restTemplate;
     private Stage stage;
     private User user;
-
     private boolean online = false;
 
 
@@ -64,9 +63,6 @@ public class GameController {
     //stats
     private int rightCharacterCounter = 0;
     private float keyPressedCounter = 0;
-    private float WPM = 0;
-    private float precision = 0;
-    private int regularity = 0;
     @Value("${url}")
     private String url;
 
@@ -83,14 +79,14 @@ public class GameController {
         currentLetter = 0;
         this.stage = new Stage();
         stage.setScene(new Scene(anchor));
-        game = new Game(1);
+        game = new Game(user.getSettings().getNumberOfWords(), user.getSettings().getLanguage());
         gameSentence = game.getSentence();
         area = new InlineCssTextArea();
         area.setDisable(true);
         AnimateText(area, gameSentence);
-        area.setLayoutX(103);
-        area.setLayoutY(116);
-        area.setPrefSize(400, 150);
+        area.setLayoutX(121);
+        area.setLayoutY(120);
+        area.setPrefSize(600, 350);
         area.setOnKeyReleased((this::keyReleased));
         area.setFocusTraversable(true);
         area.requestFocus();
@@ -110,9 +106,9 @@ public class GameController {
     }
 
     public void starting() {
-        totalTime = 180;
+        totalTime = user.getSettings().getTime();
         howLongIsMyGameSupposedToLast = (int) totalTime;
-        speed = 7;
+        speed = user.getSettings().getSpeed();
         TimerTask timertask = new TimerTask() {
             @Override
             public void run() {
@@ -251,12 +247,13 @@ public class GameController {
 
     public void updateStats(){
         float l = howLongIsMyGameSupposedToLast - totalTime;
-        WPM = (rightCharacterCounter/l)/5;
+        float WPM = (rightCharacterCounter / l) / 5;
 
-        precision = rightCharacterCounter/keyPressedCounter*100;
+        float precision = rightCharacterCounter / keyPressedCounter * 100;
+        int regularity = 0;
         user.setStat(WPM, precision, regularity);
 
-        URI uri = null;
+        URI uri;
         try {
             uri = new URI(url + "/addScore?user={user}");
         } catch (URISyntaxException e) {

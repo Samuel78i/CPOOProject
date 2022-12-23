@@ -11,6 +11,7 @@ public final class User implements Serializable {
     private final String name;
     private final String password;
     private List<Opponent> opponents;
+    private Settings settings;
     private boolean waitingOnOpponents = false;
 
     private List<Stat> stats = new ArrayList<>();
@@ -20,12 +21,14 @@ public final class User implements Serializable {
         name = n;
         password = p;
         opponents = new ArrayList<>();
+        settings = new Settings();
     }
 
     public User() {
         name = "";
         password = "";
         opponents = new ArrayList<>();
+        settings = new Settings();
     }
 
     public String getName() {
@@ -60,4 +63,12 @@ public final class User implements Serializable {
         this.waitingOnOpponents = waitingOnOpponents;
     }
 
+
+    public Settings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(Settings settings) {
+        this.settings = settings;
+    }
 }

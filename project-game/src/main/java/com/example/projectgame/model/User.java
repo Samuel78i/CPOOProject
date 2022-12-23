@@ -6,16 +6,18 @@ import java.util.List;
 public class User {
     private final String name;
     private final String password;
+    private Settings settings;
     private List<Opponent> opponents;
     private boolean waitingOnOpponents = false;
 
-    private List<Stat> stats = new ArrayList<>();
+    private final List<Stat> stats = new ArrayList<>();
 
 
     public User(String n, String p) {
         name = n;
         password = p;
         opponents = new ArrayList<>();
+        settings = new Settings();
     }
 
     public void addOpponents(Opponent o){
@@ -50,8 +52,21 @@ public class User {
         return stats.get(stats.size() - 1);
     }
 
+
     public void setStat(float wpm, float precision, int regularity) {
         Stat s = new Stat(wpm, precision, regularity);
         stats.add(s);
+    }
+
+    public Settings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(Settings settings) {
+        this.settings = settings;
+    }
+
+    public void resetSetting() {
+        settings = new Settings();
     }
 }

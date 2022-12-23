@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 public class Game {
     private String sentence = "";
-    private final int difficulty;
+    private final int numberOfWords;
 
     private int lives;
     private boolean isTheLastWordAHeal = false;
@@ -24,8 +24,9 @@ public class Game {
     private String language;
     private List<String> dico;
 
-    public Game(int d){
-        difficulty = d;
+    public Game(int n, String l){
+        numberOfWords = n;
+        language = l;
         loadDictionary();
         makeMeAGoodSentence();
         //sentence = "bonjour␣a␣tous␣les␣amis";
@@ -38,6 +39,7 @@ public class Game {
 
         try {
             URL resource = getClass().getClassLoader().getResource("Dictionaries/" + language + ".txt");
+            assert resource != null;
             Stream<String> lines = Files.lines(Path.of(resource.toURI()), StandardCharsets.UTF_8);
             dico.addAll(lines.parallel().map(line -> removeAccent(line).toLowerCase()).collect(Collectors.toList()));
 
@@ -53,7 +55,7 @@ public class Game {
     }
 
     public void makeMeAGoodSentence(){
-        for(int i = 0; i<5; i++){
+        for(int i = 0; i<numberOfWords; i++){
             int randomNum = ThreadLocalRandom.current().nextInt(0, dico.size() + 1);
             if(i!=0) {
                 sentence += "␣";
