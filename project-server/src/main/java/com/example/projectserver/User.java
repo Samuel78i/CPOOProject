@@ -14,6 +14,8 @@ public final class User implements Serializable {
     private Settings settings;
     private boolean waitingOnOpponents = false;
 
+    private int malus = 0;
+
     private List<Stat> stats = new ArrayList<>();
 
 
@@ -70,5 +72,17 @@ public final class User implements Serializable {
 
     public void setSettings(Settings settings) {
         this.settings = settings;
+    }
+
+    public void addAMalus() {
+        malus++;
+    }
+
+    public int getMalus() {
+        return malus;
+    }
+
+    public void setMalus(int malus) {
+        this.malus = malus;
     }
 }

@@ -124,17 +124,17 @@ public class SettingsController {
     @FXML
     public void nowTwenty(){
         settings.setNumberOfWords(20);
-        speed.setText("20");
+        now.setText("20");
     }
     @FXML
     public void nowTwentyFive(){
         settings.setNumberOfWords(25);
-        speed.setText("25");
+        now.setText("25");
     }
     @FXML
     public void nowThirty(){
         settings.setNumberOfWords(30);
-        speed.setText("30");
+        now.setText("30");
     }
 
 

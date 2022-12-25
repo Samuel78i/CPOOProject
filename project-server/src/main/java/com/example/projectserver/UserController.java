@@ -67,14 +67,28 @@ public class UserController {
 //        }
 //    }
 
-    @PostMapping("/refreshUser")
-    public void refreshUser(@RequestBody User user) {
+    @GetMapping("/refreshUser")
+    public User refreshUser(@RequestParam String username) {
         UserSave save = UserSave.input();
-        if (save.existDeja(user.getName())) {
+        if (save.existDeja(username)) {
+            return save.getUser(username);
+        }
+        return null;
+    }
+
+
+    @PostMapping("/addAMalusToOpponent")
+    public void addAMalusToOpponent(@RequestParam String userName, @RequestBody Opponent opponent) {
+        UserSave save = UserSave.input();
+        if (save.existDeja(userName)) {
+            User user = save.getUser(userName);
+            User versus = save.getUser(opponent.getName());
+            versus.addAMalus();
             save.updateUser(user);
             save.output();
         }
     }
+
 
     @PostMapping("/addScore")
     public void addScore(@RequestBody User user) {

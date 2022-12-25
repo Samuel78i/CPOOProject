@@ -1,14 +1,20 @@
 package com.example.projectgame.model;
 
 public class Stat {
-    private float wordPerMinutes = 0;
-    private float precision = 0;
-    private float regularity = 0;
+    private float wordPerMinutes;
+    private float precision;
+    private float regularity;
 
     public Stat(float w, float p, float r){
         wordPerMinutes = w;
         precision = p;
         regularity = r;
+    }
+
+    public Stat() {
+        wordPerMinutes = 0;
+        precision = 0;
+        regularity = 0;
     }
 
     public float getWordPerMinutes() {

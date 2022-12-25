@@ -2,6 +2,7 @@ package com.example.projectgame.controller;
 
 import com.example.projectgame.model.Game;
 import com.example.projectgame.model.Opponent;
+import com.example.projectgame.model.TextColors;
 import com.example.projectgame.model.User;
 import javafx.animation.Animation;
 import javafx.animation.Transition;
@@ -18,13 +19,15 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.InlineCssTextArea;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -58,7 +61,6 @@ public class GameController {
     private int validatedWords = 0;
     private int speed;
     private Opponent opponent;
-    private boolean isTheLastWordAHeal = false;
 
     //stats
     private int rightCharacterCounter = 0;
@@ -79,30 +81,6 @@ public class GameController {
         currentLetter = 0;
         this.stage = new Stage();
         stage.setScene(new Scene(anchor));
-        game = new Game(user.getSettings().getNumberOfWords(), user.getSettings().getLanguage());
-        gameSentence = game.getSentence();
-        area = new InlineCssTextArea();
-        area.setDisable(true);
-        AnimateText(area, gameSentence);
-        area.setLayoutX(121);
-        area.setLayoutY(120);
-        area.setPrefSize(600, 350);
-        area.setOnKeyReleased((this::keyReleased));
-        area.setFocusTraversable(true);
-        area.requestFocus();
-
-
-        // to cancel character-removing keys
-        area.addEventFilter(KeyEvent.KEY_PRESSED, Event::consume);
-        // to cancel character keys
-        area.addEventFilter(KeyEvent.KEY_TYPED, Event::consume);
-        //to cancel clicks
-        area.addEventFilter(MouseEvent.ANY, Event::consume);
-
-        time = new Timer();
-        stage.setOnCloseRequest(event -> time.cancel());
-
-        anchor.getChildren().add(area);
     }
 
     public void starting() {
@@ -116,17 +94,25 @@ public class GameController {
                     //update time
                     ConvertTime(totalTime);
                     totalTime--;
+                    if(online){
+                        user = restTemplate.getForObject(
+                                url + "/refreshUser?name={name}", User.class, user.getName());
+                        for(int i = 0; i < Objects.requireNonNull(user).getMalus(); i++){
+                            game.addAWordWithNoColor();
+                            plusOneWord();
+                        }
+                    }
                     //adding a word
                     if(totalTime%speed == 0){
-                        game.addAWord();
-                        gameSentence += game.getLastWord();
-                        if(game.isTheLastWordAHeal()){
-                            isTheLastWordAHeal = true;
+                        TextColors textColors = game.addAWord(online);
+                        plusOneWord();
+                        if(textColors != null){
+                            if(textColors.getColors().equals("blue")) {
+                                area.setStyle(0, textColors.getX(), textColors.getY(), "-fx-fill: #0000FF");
+                            }else if(textColors.getColors().equals("pink")){
+                                area.setStyle(0, textColors.getX(), textColors.getY(), "-fx-fill: #FFC0CB");
+                            }
                         }
-                        area.replaceText(gameSentence);
-                        area.setStyle(0, 0, currentLetter, "-fx-fill: #00FF00");
-                        area.setStyle(0, currentLetter, currentLetter + badLetterCounter, "-fx-fill: #FF0000");
-                        area.setStyle(0, currentLetter + badLetterCounter, gameSentence.length(), "-fx-fill: #000000");
                         area.displaceCaret(currentLetter+ badLetterCounter);
                     }
 
@@ -142,6 +128,51 @@ public class GameController {
         };
         time.scheduleAtFixedRate(timertask, 0, 1000);
 
+    }
+
+    private void plusOneWord() {
+        isTheLineFull();
+        gameSentence += game.getLastWord();
+        area.replaceText(gameSentence);
+        area.setStyle(0, currentLetter + badLetterCounter, gameSentence.length(), "-fx-fill: #000000");
+        updateAllColors(0);
+        area.setStyle(0, 0, currentLetter, "-fx-fill: #00FF00");
+        area.setStyle(0, currentLetter, currentLetter + badLetterCounter, "-fx-fill: #FF0000");
+    }
+
+    public void isTheLineFull(){
+        if(game.howManyWords() > user.getSettings().getNumberOfWords()){
+            for(int i = currentLetter + badLetterCounter; i < gameSentence.length(); i++){
+                if(!(""+gameSentence.charAt(i)).equals("␣")){
+                    badLetterCounter++;
+                }
+            }
+            validateAWord();
+        }
+    }
+
+    private void validateAWord() {
+        currentLetter++;
+        game.aWordHasBeenValidate(badLetterCounter, currentLetter);
+        if(game.getLives() <= 0){
+            gameOver();
+        }
+
+        validatedWords++;
+        if(validatedWords == 100){
+            speed--;
+            validatedWords=0;
+        }
+        if(currentLetter - badLetterCounter > 0){
+            rightCharacterCounter = currentLetter - badLetterCounter;
+        }
+        int numberOfLetterThatAreBeingErased = currentLetter + badLetterCounter;
+        wasTheWordValidateAHealOrMalus(badLetterCounter);
+        badLetterCounter = 0;
+        currentLetter = 0;
+        wrongLetterBeforeSpace = 0;
+        isTheGameOverQuestionMark();
+        updateVisualsBecauseWordValidate(numberOfLetterThatAreBeingErased);
     }
 
     public void ConvertTime(long time) {
@@ -161,27 +192,7 @@ public class GameController {
     protected void keyReleased(KeyEvent event) {
         keyPressedCounter++;
         if(event.getText().equals("\u0020") && (""+gameSentence.charAt(currentLetter + badLetterCounter)).equals("␣")){
-            currentLetter++;
-            game.aWordHasBeenValidate(badLetterCounter, currentLetter);
-            if(game.getLives() <= 0){
-                gameOver();
-            }
-
-            validatedWords++;
-            if(validatedWords == 100){
-                speed--;
-                validatedWords=0;
-            }
-
-            if(currentLetter - badLetterCounter > 0){
-                rightCharacterCounter = currentLetter - badLetterCounter;
-            }
-
-            badLetterCounter = 0;
-            currentLetter = 0;
-            wrongLetterBeforeSpace = 0;
-            isTheGameOverQuestionMark();
-            updateVisualsBecauseWordValidate();
+            validateAWord();
         }else if(event.getText().equals(""+gameSentence.charAt(currentLetter + badLetterCounter))){
             currentLetter++;
             badLetterCounter= 0;
@@ -206,18 +217,51 @@ public class GameController {
         }
     }
 
-    private void updateVisualsBecauseWordValidate(){
+    public void wasTheWordValidateAHealOrMalus(int badLetterCounter){
+        if(!game.getColorsList().isEmpty()) {
+            if (game.getColorsList().get(0).getX() == 0) {
+                String color = game.getColorsList().get(0).getColors();
+                game.getColorsList().remove(0);
+                if (color.equals("pink") && badLetterCounter == 0) {
+                    RequestEntity<Opponent> request = RequestEntity.post(url + "/addAMalusToOpponent?userName={userName}", this.user.getName()).body(this.opponent);
+                    restTemplate.exchange(request, Void.class);
+                }
+                if (color.equals("blue")) {
+                    game.addLives(game.getColorsList().get(0).getY());
+                }
+            }
+        }
+    }
+
+    private void updateVisualsBecauseWordValidate(int numberOfLetterThatAreBeingErased){
         gameSentence = game.getSentence();
         area.replaceText(gameSentence);
         area.setStyle(0, 0, gameSentence.length(), "-fx-fill: #000000");
+        updateAllColors(numberOfLetterThatAreBeingErased);
         area.displaceCaret(0);
     }
+
+    public void updateAllColors(int numberOfLetterThatAreBeingErased){
+       for(TextColors t : game.getColorsList()){
+            if(t.getColors().equals("blue")){
+                t.setX(t.getX() - numberOfLetterThatAreBeingErased);
+                t.setY(t.getY() - numberOfLetterThatAreBeingErased);
+                area.setStyle(0, t.getX(), t.getY(), "-fx-fill: #0000FF");
+            }else if(t.getColors().equals("pink")){
+                t.setX(t.getX() - numberOfLetterThatAreBeingErased);
+                t.setY(t.getY() - numberOfLetterThatAreBeingErased);
+                area.setStyle(0, t.getX(), t.getY(), "-fx-fill: #FFC0CB");
+            }
+       }
+    }
+
 
     private void updateVisualsBecauseIsRight() {
         area.setStyle(0, 0, currentLetter, "-fx-fill: #00FF00");
         if(currentLetter < gameSentence.length()) {
             area.setStyle(0, currentLetter, gameSentence.length() - 1, "-fx-fill: #000000");
         }
+        updateAllColors(0);
         area.displaceCaret(currentLetter);
     }
 
@@ -226,6 +270,7 @@ public class GameController {
         area.setStyle(0, 0, currentLetter, "-fx-fill: #00FF00");
         area.setStyle(0, currentLetter, currentLetter + badLetterCounter, "-fx-fill: #FF0000");
         area.setStyle(0, currentLetter + badLetterCounter, gameSentence.length(), "-fx-fill: #000000");
+        updateAllColors(-wrongLetterBeforeSpace);
         area.displaceCaret(currentLetter+badLetterCounter);
     }
 
@@ -252,14 +297,9 @@ public class GameController {
         float precision = rightCharacterCounter / keyPressedCounter * 100;
         int regularity = 0;
         user.setStat(WPM, precision, regularity);
-
-        URI uri;
-        try {
-            uri = new URI(url + "/addScore?user={user}");
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        restTemplate.postForObject(uri, user, User.class);
+        HttpEntity<User> request =
+                new HttpEntity<>(user, null);
+        restTemplate.postForObject(url + "/addScore", request, User.class);
     }
 
 
@@ -280,6 +320,44 @@ public class GameController {
 
     public void setUser(User u){
         user = u;
+        initGame();
+    }
+
+    private void initGame() {
+        game = new Game(user.getSettings().getNumberOfWords(), user.getSettings().getLanguage());
+        gameSentence = game.getSentence();
+        //gameSentence = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        initArea();
+
+        time = new Timer();
+        stage.setOnCloseRequest(event -> time.cancel());
+
+
+        VirtualizedScrollPane<InlineCssTextArea> v = new VirtualizedScrollPane<>(area);
+        v.setLayoutX(121);
+        v.setLayoutY(120);
+        v.setPrefSize(600, 350);
+        area.setWrapText(true);
+        anchor.getChildren().add(v);
+    }
+
+    private void initArea(){
+        area = new InlineCssTextArea();
+        area.replaceText(gameSentence);
+        area.setDisable(true);
+        AnimateText(area, gameSentence);
+//        area.setLayoutX(121);
+//        area.setLayoutY(120);
+//        area.setPrefSize(600, 350);
+        area.setOnKeyReleased((this::keyReleased));
+        area.setFocusTraversable(true);
+        area.requestFocus();
+        // to cancel character-removing keys
+        area.addEventFilter(KeyEvent.KEY_PRESSED, Event::consume);
+        // to cancel character keys
+        area.addEventFilter(KeyEvent.KEY_TYPED, Event::consume);
+        //to cancel clicks
+        area.addEventFilter(MouseEvent.ANY, Event::consume);
     }
 
     public void show() {

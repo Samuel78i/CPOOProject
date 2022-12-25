@@ -11,6 +11,7 @@ public class User {
     private boolean waitingOnOpponents = false;
 
     private final List<Stat> stats = new ArrayList<>();
+    private int malus = 0;
 
 
     public User(String n, String p) {
@@ -49,6 +50,9 @@ public class User {
     }
 
     public Stat getLastStat(){
+        if(stats.isEmpty()){
+            return new Stat();
+        }
         return stats.get(stats.size() - 1);
     }
 
@@ -68,5 +72,9 @@ public class User {
 
     public void resetSetting() {
         settings = new Settings();
+    }
+
+    public int getMalus() {
+        return malus;
     }
 }
