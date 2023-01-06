@@ -5,6 +5,7 @@ import com.example.projectgame.model.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import net.rgielen.fxweaver.core.FxWeaver;
@@ -19,7 +20,10 @@ public class MenuController {
 
     @FXML
     private AnchorPane anchor;
+    @FXML
+    private Button online;
     private User user;
+    private boolean offline = false;
 
     public MenuController(FxWeaver fxWeaver) {
         this.fxWeaver = fxWeaver;
@@ -40,7 +44,7 @@ public class MenuController {
     }
 
     @FXML
-    protected void buttonOnline(ActionEvent event) {
+    protected void buttonOnline() {
         ChooseYourOpponentsController chooseYourOpponentsController = fxWeaver.loadController(ChooseYourOpponentsController.class);
         chooseYourOpponentsController.setUser(user);
         chooseYourOpponentsController.show();
@@ -48,7 +52,7 @@ public class MenuController {
     }
 
     @FXML
-    protected void buttonStat(ActionEvent event) {
+    protected void buttonStat() {
         StatsController statsController = fxWeaver.loadController(StatsController.class);
         statsController.setUser(user);
         statsController.show();
@@ -60,5 +64,11 @@ public class MenuController {
     }
     public void show() {
         stage.show();
+    }
+
+    public void setOffline(boolean b) {
+        offline =true;
+        online.setDisable(true);
+        online.setOpacity(0);
     }
 }

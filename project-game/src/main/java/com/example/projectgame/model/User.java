@@ -8,6 +8,7 @@ public class User {
     private final String password;
     private Settings settings;
     private List<Opponent> opponents;
+    private boolean opponentLost = false;
     private boolean waitingOnOpponents = false;
 
     private final List<Stat> stats = new ArrayList<>();
@@ -45,6 +46,14 @@ public class User {
         this.waitingOnOpponents = waitingOnOpponents;
     }
 
+    public void setOpponentLost(boolean opponentLost) {
+        this.opponentLost = opponentLost;
+    }
+
+    public boolean isOpponentLost() {
+        return opponentLost;
+    }
+
     public List<Stat> getStats(){
         return stats;
     }
@@ -77,4 +86,5 @@ public class User {
     public int getMalus() {
         return malus;
     }
+
 }

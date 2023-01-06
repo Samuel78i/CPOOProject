@@ -94,19 +94,12 @@ public class Game {
 
         Random r = new Random();
         int i = r.nextInt(5);
-//        if (i == 0) {
+        if (i == 0) {
             TextColors t = new TextColors(x, y, "blue");
             colorsList.add(t);
             return t;
-//        }
-//        if(online) {
-//            if (i == 1) {
-//                TextColors t1 = new TextColors(x, y, "pink");
-//                colorsList.add(t1);
-//                return t1;
-//            }
-//        }
-        //return null;
+        }
+        return null;
     }
 
     public void addAWordWithNoColor(){

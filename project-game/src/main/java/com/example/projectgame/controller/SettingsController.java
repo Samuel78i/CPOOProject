@@ -33,6 +33,7 @@ public class SettingsController {
     private Button back;
     private User user;
     private Settings settings;
+    private boolean offline = false;
 
     @Autowired
     public SettingsController(FxWeaver fxWeaver) {
@@ -144,6 +145,9 @@ public class SettingsController {
 
         GameController gameController = fxWeaver.loadController(GameController.class);
         gameController.setUser(user);
+        if(offline){
+            gameController.setOffline(true);
+        }
         gameController.show();
         stage.close();
     }
@@ -153,6 +157,9 @@ public class SettingsController {
         MenuController menuController = fxWeaver.loadController(MenuController.class);
         user.resetSetting();
         menuController.setUser(user);
+        if(offline){
+            menuController.setOffline(true);
+        }
         menuController.show();
 
         stage.close();

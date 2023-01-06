@@ -99,6 +99,17 @@ public class UserController {
         }
     }
 
+    @PostMapping("/userLost")
+    public void addScore(@RequestBody String name) {
+        UserSave save = UserSave.input();
+        if (save.existDeja(name)) {
+            User user = save.getUser(name);
+            user.setOpponentLost(true);
+            save.updateUser(user);
+            save.output();
+        }
+    }
+
     @GetMapping("/isMyOpponentHere")
     public Boolean isMyOpponentHere(@RequestParam String name,
                                  @RequestParam Opponent opponent){

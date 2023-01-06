@@ -42,13 +42,18 @@ public class GameController {
     private Stage stage;
     private User user;
     private boolean online = false;
+    private boolean offline = false;
+
 
 
     @FXML
     private AnchorPane anchor;
     @FXML
     private Label timerLabel;
+    @FXML
+    private Label lives;
     private Timer time;
+    private boolean timerCanceled = false;
     private long totalTime;
     private int howLongIsMyGameSupposedToLast;
     private InlineCssTextArea area;
@@ -94,14 +99,22 @@ public class GameController {
                     //update time
                     ConvertTime(totalTime);
                     totalTime--;
+
+                    //adding every malus needed
                     if(online){
                         user = restTemplate.getForObject(
                                 url + "/refreshUser?name={name}", User.class, user.getName());
+                        assert user != null;
+                        if(user.isOpponentLost()) {
+                            gameOver();
+                        }
                         for(int i = 0; i < Objects.requireNonNull(user).getMalus(); i++){
                             game.addAWordWithNoColor();
                             plusOneWord();
                         }
                     }
+
+
                     //adding a word
                     if(totalTime%speed == 0){
                         TextColors textColors = game.addAWord(online);
@@ -116,9 +129,14 @@ public class GameController {
                         area.displaceCaret(currentLetter+ badLetterCounter);
                     }
 
+
+                    lives.setText(String.valueOf(game.getLives()));
+
+
                     //timer over
-                    if (totalTime < 0) {
+                    if (totalTime < 0 && !timerCanceled) {
                         time.cancel();
+                        timerCanceled = true;
                         timerLabel.setText("TIME OVER !");
                         isTheGameOverQuestionMark();
 
@@ -178,10 +196,10 @@ public class GameController {
     public void ConvertTime(long time) {
         long min = TimeUnit.SECONDS.toMinutes(time);
         long sec = time - (min * 60);
-        timerLabel.setText("TIME LEFT: " + affiche(min) + ":" + affiche(sec));
+        timerLabel.setText("TIME LEFT: " + stringTime(min) + ":" + stringTime(sec));
     }
 
-    public String affiche(long val) {
+    public String stringTime(long val) {
         if (val < 10) {
             return 0 + "" + val;
         } else
@@ -193,7 +211,7 @@ public class GameController {
         keyPressedCounter++;
         if(event.getText().equals("\u0020") && (""+gameSentence.charAt(currentLetter + badLetterCounter)).equals("␣")){
             validateAWord();
-        }else if(event.getText().equals(""+gameSentence.charAt(currentLetter + badLetterCounter))){
+        }else if(event.getText().equals(""+gameSentence.charAt(currentLetter))){
             currentLetter++;
             badLetterCounter= 0;
             updateVisualsBecauseIsRight();
@@ -215,6 +233,8 @@ public class GameController {
             badLetterCounter++;
             updateVisualsBecauseIsWrongOrBackspace();
         }
+
+        lives.setText(String.valueOf(game.getLives()));
     }
 
     public void wasTheWordValidateAHealOrMalus(int badLetterCounter){
@@ -276,30 +296,46 @@ public class GameController {
 
 
     private void isTheGameOverQuestionMark(){
-        if(currentLetter == gameSentence.length() || game.getLives() <= 0 || timerLabel.getText().equals("TIME OVER !")){
+        if(game.getLives() <= 0 || timerLabel.getText().equals("TIME OVER !")){
             gameOver();
         }
     }
 
     public void gameOver(){
         updateStats();
-        time.cancel();
+
         ReplayController replayController = fxWeaver.loadController(ReplayController.class);
         replayController.setUser(user);
+        if(online){
+            replayController.setLastGameWasOnline(opponent.getName(), user.isOpponentLost());
+            HttpEntity<String> request =
+                    new HttpEntity<>(opponent.getName(), null);
+            restTemplate.postForObject(url + "/userLost", request, String.class);
+        }
+
+        user.setOpponentLost(false);
+        //push Stats
+        if(!offline) {
+            HttpEntity<User> request =
+                    new HttpEntity<>(user, null);
+            restTemplate.postForObject(url + "/addScore", request, User.class);
+        }
+
         replayController.show();
+
+        timerCanceled = true;
+        time.cancel();
+
         stage.close();
     }
 
     public void updateStats(){
         float l = howLongIsMyGameSupposedToLast - totalTime;
         float WPM = (rightCharacterCounter / l) / 5;
-
         float precision = rightCharacterCounter / keyPressedCounter * 100;
         int regularity = 0;
+
         user.setStat(WPM, precision, regularity);
-        HttpEntity<User> request =
-                new HttpEntity<>(user, null);
-        restTemplate.postForObject(url + "/addScore", request, User.class);
     }
 
 
@@ -326,12 +362,12 @@ public class GameController {
     private void initGame() {
         game = new Game(user.getSettings().getNumberOfWords(), user.getSettings().getLanguage());
         gameSentence = game.getSentence();
-        //gameSentence = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         initArea();
 
         time = new Timer();
         stage.setOnCloseRequest(event -> time.cancel());
 
+        lives.setText(String.valueOf(game.getLives()));
 
         VirtualizedScrollPane<InlineCssTextArea> v = new VirtualizedScrollPane<>(area);
         v.setLayoutX(121);
@@ -346,12 +382,10 @@ public class GameController {
         area.replaceText(gameSentence);
         area.setDisable(true);
         AnimateText(area, gameSentence);
-//        area.setLayoutX(121);
-//        area.setLayoutY(120);
-//        area.setPrefSize(600, 350);
         area.setOnKeyReleased((this::keyReleased));
         area.setFocusTraversable(true);
         area.requestFocus();
+
         // to cancel character-removing keys
         area.addEventFilter(KeyEvent.KEY_PRESSED, Event::consume);
         // to cancel character keys
@@ -368,5 +402,9 @@ public class GameController {
     public void setOnline(Opponent opponent) {
         online = true;
         this.opponent = opponent;
+    }
+
+    public void setOffline(boolean b) {
+        offline = true;
     }
 }

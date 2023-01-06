@@ -5,6 +5,6 @@
 
 <AnchorPane fx:id="anchor" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectgame.controller.MenuController">
     <Button layoutX="110.0" layoutY="175.0" mnemonicParsing="false" onAction="#buttonSOLO" prefHeight="58.0" prefWidth="127.0" text="SOLO" />
-    <Button layoutX="319.0" layoutY="175.0" mnemonicParsing="false" onAction="#buttonOnline" prefHeight="58.0" prefWidth="127.0" text="ONLINE" />
+    <Button fx:id="online" layoutX="319.0" layoutY="175.0" mnemonicParsing="false" onAction="#buttonOnline" prefHeight="58.0" prefWidth="127.0" text="ONLINE" />
    <Button layoutX="217.0" layoutY="324.0" mnemonicParsing="false" onAction="#buttonStat" prefHeight="25.0" prefWidth="127.0" text="stats" />
 </AnchorPane>

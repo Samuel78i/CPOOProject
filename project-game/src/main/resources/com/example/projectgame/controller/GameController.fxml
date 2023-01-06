@@ -3,8 +3,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="anchor" prefHeight="577.0" prefWidth="830.0" xmlns="http://javafx.com/javafx/16"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectgame.controller.GameController">
-   <Label fx:id="timerLabel" layoutX="473.0" layoutY="6.0" prefHeight="26.0" prefWidth="113.0"/>
-   <Pane layoutX="121.0" layoutY="120.0" prefHeight="350.0" prefWidth="600.0"/>
+<AnchorPane fx:id="anchor" prefHeight="577.0" prefWidth="830.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectgame.controller.GameController">
+   <Label fx:id="timerLabel" layoutX="473.0" layoutY="6.0" prefHeight="26.0" prefWidth="113.0" />
+   <Pane layoutX="121.0" layoutY="120.0" prefHeight="350.0" prefWidth="600.0" />
+   <Label layoutX="20.0" layoutY="19.0" prefHeight="26.0" prefWidth="87.0" text="Lives : " />
+   <Label fx:id="lives" layoutX="64.0" layoutY="19.0" prefHeight="26.0" prefWidth="79.0" />
 </AnchorPane>

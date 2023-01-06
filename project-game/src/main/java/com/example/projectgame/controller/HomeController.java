@@ -1,5 +1,6 @@
 package com.example.projectgame.controller;
 
+import com.example.projectgame.model.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
@@ -30,7 +31,19 @@ public class HomeController {
 
 
     @FXML
-    protected void connection(ActionEvent actionEvent) {
+    protected void offline() {
+        MenuController menuController = fxWeaver.loadController(MenuController.class);
+        User user = new User("user", "");
+        menuController.setUser(user);
+        menuController.setOffline(true);
+        menuController.show();
+
+        Stage s = (Stage) anchor.getScene().getWindow();
+        s.close();
+    }
+
+    @FXML
+    protected void connection() {
         fxWeaver.loadController(UserConnectionController.class).show();
 
         Stage s = (Stage) anchor.getScene().getWindow();
@@ -38,7 +51,7 @@ public class HomeController {
     }
 
     @FXML
-    protected void creation(ActionEvent actionEvent) {
+    protected void creation() {
         fxWeaver.loadController(UserCreationController.class).show();
 
         Stage s = (Stage) anchor.getScene().getWindow();

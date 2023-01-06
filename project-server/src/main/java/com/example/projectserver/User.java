@@ -11,9 +11,9 @@ public final class User implements Serializable {
     private final String name;
     private final String password;
     private List<Opponent> opponents;
+    private boolean opponentLost = false;
     private Settings settings;
     private boolean waitingOnOpponents = false;
-
     private int malus = 0;
 
     private List<Stat> stats = new ArrayList<>();
@@ -84,5 +84,13 @@ public final class User implements Serializable {
 
     public void setMalus(int malus) {
         this.malus = malus;
+    }
+
+    public void setOpponentLost(boolean b) {
+        opponentLost = b;
+    }
+
+    public boolean isOpponentLost() {
+        return opponentLost;
     }
 }

@@ -3,9 +3,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="anchor" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectgame.controller.ReplayController">
-   <Label layoutX="223.0" layoutY="146.0" prefHeight="98.0" prefWidth="228.0" text="Bien jouer bg"/>
-   <Button focusTraversable="false" mnemonicParsing="false" onAction="#ButtonYes" text="Rejoue"/>
-   <Button layoutX="534.0" layoutY="2.0" mnemonicParsing="false" onAction="#menu" text="Menu"/>
+<AnchorPane fx:id="anchor" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectgame.controller.ReplayController">
+   <Label layoutX="207.0" layoutY="151.0" prefHeight="98.0" prefWidth="187.0" text="Great Game !!" />
+   <Button focusTraversable="false" layoutX="215.0" layoutY="264.0" mnemonicParsing="false" onAction="#replay" prefHeight="34.0" prefWidth="86.0" text="Replay" />
+   <Button layoutX="300.0" layoutY="264.0" mnemonicParsing="false" onAction="#menu" prefHeight="34.0" prefWidth="86.0" text="Menu" />
+   <Label fx:id="userName" layoutX="313.0" layoutY="188.0" prefHeight="25.0" prefWidth="118.0" />
+   <Button focusTraversable="false" layoutX="258.0" layoutY="298.0" mnemonicParsing="false" onAction="#stat" prefHeight="34.0" prefWidth="86.0" text="Stats" />
+   <Label fx:id="opponent" layoutX="168.0" layoutY="76.0" prefHeight="34.0" prefWidth="266.0" />
 </AnchorPane>
