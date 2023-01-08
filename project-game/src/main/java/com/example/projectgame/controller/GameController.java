@@ -118,7 +118,7 @@ public class GameController {
 
                     //adding a word
                     if(totalTime%speed == 0){
-                        TextColors textColors = game.addAWord(gameSentence);
+                        TextColors textColors = game.addAWord(gameSentence, online);
                         plusOneWord();
                         if(textColors != null){
                             if(textColors.getColors().equals("blue")) {
