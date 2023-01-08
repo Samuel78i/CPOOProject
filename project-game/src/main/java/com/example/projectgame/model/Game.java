@@ -19,7 +19,6 @@ public class Game {
     private final int numberOfWords;
 
     private int lives;
-    private boolean isTheLastWordAHeal = false;
 
     private String language;
     private List<String> dico;
@@ -56,7 +55,7 @@ public class Game {
     }
 
     public void makeMeAGoodSentence(){
-        for(int i = 0; i<numberOfWords - 3; i++){
+        for(int i = 0; i<numberOfWords/3; i++){
             int randomNum = ThreadLocalRandom.current().nextInt(0, dico.size() + 1);
             if(i!=0) {
                 sentence += "␣";
@@ -85,7 +84,8 @@ public class Game {
         sentence = sentence.substring(currentLetter + badLetterCounter);
     }
 
-    public TextColors addAWord(boolean online){
+    public TextColors addAWord(String gameSentence){
+        sentence = gameSentence;
         int randomNum = ThreadLocalRandom.current().nextInt(0, dico.size() + 1);
         int x = sentence.length() +1;
         String wordFromDico = dico.get(randomNum);
@@ -93,7 +93,7 @@ public class Game {
         sentence += "␣" + wordFromDico;
 
         Random r = new Random();
-        int i = r.nextInt(5);
+        int i = r.nextInt(2);
         if (i == 0) {
             TextColors t = new TextColors(x, y, "blue");
             colorsList.add(t);
@@ -126,8 +126,6 @@ public class Game {
     }
 
 
-    public boolean isTheLastWordAHeal(){return isTheLastWordAHeal;}
-
     public List<TextColors> getColorsList() {
         return colorsList;
     }
@@ -148,5 +146,17 @@ public class Game {
 
     public void addLives(int y) {
         lives+= y;
+    }
+
+    public int getLengthOfFirstWord() {
+        int result = 0;
+        for(int i =0; i< sentence.length(); i++){
+            if(sentence.charAt(i) == '␣'){
+                break;
+            }else{
+                result++;
+            }
+        }
+        return result;
     }
 }

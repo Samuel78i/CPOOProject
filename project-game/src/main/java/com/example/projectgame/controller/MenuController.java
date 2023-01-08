@@ -39,6 +39,9 @@ public class MenuController {
     protected void buttonSOLO() {
         SettingsController settingsController = fxWeaver.loadController(SettingsController.class);
         settingsController.setUser(user);
+        if(offline) {
+            settingsController.setOffline();
+        }
         settingsController.show();
         stage.close();
     }

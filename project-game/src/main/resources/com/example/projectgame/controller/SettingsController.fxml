@@ -28,16 +28,6 @@
             <Button mnemonicParsing="false" onAction="#SpeedNine" prefHeight="26.0" prefWidth="69.0" text="9" />
         </buttons>
     </ButtonBar>
-    <ButtonBar layoutX="56.0" layoutY="432.0" prefHeight="40.0" prefWidth="367.0">
-        <buttons>
-            <Button mnemonicParsing="false" onAction="#TimerOne" prefHeight="26.0" prefWidth="69.0" text="1 min" />
-            <Button mnemonicParsing="false" onAction="#TimerTwo" prefHeight="26.0" prefWidth="69.0" text="2 min" />
-            <Button mnemonicParsing="false" onAction="#TimerThree" prefHeight="26.0" prefWidth="69.0" text="3 min" />
-            <Button mnemonicParsing="false" onAction="#TimerFour" prefHeight="26.0" prefWidth="69.0" text="4 min" />
-            <Button mnemonicParsing="false" onAction="#TimerFive" prefHeight="26.0" prefWidth="69.0" text="5 min" />
-            <Button mnemonicParsing="false" onAction="#TimerSix" prefHeight="26.0" prefWidth="69.0" text="6 min" />
-        </buttons>
-    </ButtonBar>
     <ButtonBar layoutX="108.0" layoutY="323.0" prefHeight="40.0" prefWidth="385.0">
         <buttons>
             <Button mnemonicParsing="false" onAction="#esp" prefHeight="26.0" prefWidth="105.0" text="Spanish" />
@@ -61,14 +51,7 @@
             <Font size="12.0" />
         </font>
     </Label>
-    <ButtonBar layoutX="160.0" layoutY="541.0" prefHeight="40.0" prefWidth="280.0">
-        <buttons>
-            <Button mnemonicParsing="false" onAction="#nowTwenty" prefHeight="26.0" prefWidth="94.0" text="20" />
-            <Button mnemonicParsing="false" onAction="#nowTwentyFive" prefHeight="26.0" prefWidth="69.0" text="25" />
-            <Button mnemonicParsing="false" onAction="#nowThirty" prefHeight="26.0" prefWidth="126.0" text="30" />
-        </buttons>
-    </ButtonBar>
-    <Label layoutX="55.0" layoutY="494.0" prefHeight="40.0" prefWidth="299.0" text="NUMBER OF WORDS">
+    <Label layoutX="6.0" layoutY="494.0" prefHeight="40.0" prefWidth="348.0" text="NUMBER OF WORDS MAX">
         <font>
             <Font size="28.0" />
         </font>
@@ -83,4 +66,8 @@
             <Font name="System Bold" size="12.0" />
         </font>
     </Button>
+   <TextField fx:id="nowTF" layoutX="167.0" layoutY="557.0" prefHeight="25.0" prefWidth="168.0" />
+   <Button layoutX="368.0" layoutY="557.0" mnemonicParsing="false" onAction="#nowValidate" text="✔" />
+   <TextField fx:id="timeTF" layoutX="167.0" layoutY="442.0" prefHeight="25.0" prefWidth="168.0" />
+   <Button layoutX="368.0" layoutY="442.0" mnemonicParsing="false" onAction="#timeValidate" text="✔" />
 </AnchorPane>

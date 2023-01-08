@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import net.rgielen.fxweaver.core.FxWeaver;
@@ -13,6 +14,8 @@ import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.regex.Pattern;
 
 @Component
 @FxmlView
@@ -24,6 +27,10 @@ public class SettingsController {
     @FXML
     private Label language;
     @FXML
+    private TextField timeTF;
+    @FXML
+    private TextField nowTF;
+    @FXML
     private Label time;
     @FXML
     private Label now;
@@ -34,6 +41,7 @@ public class SettingsController {
     private User user;
     private Settings settings;
     private boolean offline = false;
+    private final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
     @Autowired
     public SettingsController(FxWeaver fxWeaver) {
@@ -71,71 +79,49 @@ public class SettingsController {
     }
 
     @FXML
-    public void TimerOne() {
-        settings.setTime(60);
-        time.setText("1 min");
+    public void timeValidate(){
+        if(isNumeric(timeTF.getText())) {
+            settings.setTime(Long.parseLong(timeTF.getText()));
+            time.setText("Time is set at : " + timeTF.getText() + " min");
+            timeTF.setText("");
+        }else{
+            time.setText("ERROR");
+        }
     }
 
-    @FXML
-    public void TimerTwo() {
-        settings.setTime(120);
-        time.setText("2 min");
+    public boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        return pattern.matcher(strNum).matches();
     }
 
-    @FXML
-    public void TimerThree() {
-        settings.setTime(180);
-        time.setText("3 min");
-    }
-
-    @FXML
-    public void TimerFour() {
-        settings.setTime(240);
-        time.setText("4 min");
-    }
-
-    @FXML
-    public void TimerFive() {
-        settings.setTime(300);
-        time.setText("5 min");
-    }
-
-    @FXML
-    public void TimerSix() {
-        settings.setTime(360);
-        time.setText("6 min");
-    }
 
     @FXML
     public void SpeedSix(){
-        settings.setSpeed(6);
+        settings.setSpeed(8);
         speed.setText("6");
     }
     @FXML
     public void SpeedEight(){
-        settings.setSpeed(8);
+        settings.setSpeed(6);
         speed.setText("8");
     }
     @FXML
     public void SpeedNine(){
-        settings.setSpeed(9);
+        settings.setSpeed(5);
         speed.setText("9");
     }
 
     @FXML
-    public void nowTwenty(){
-        settings.setNumberOfWords(20);
-        now.setText("20");
-    }
-    @FXML
-    public void nowTwentyFive(){
-        settings.setNumberOfWords(25);
-        now.setText("25");
-    }
-    @FXML
-    public void nowThirty(){
-        settings.setNumberOfWords(30);
-        now.setText("30");
+    public void nowValidate(){
+        if(isNumeric(nowTF.getText())) {
+            settings.setTime(Long.parseLong(nowTF.getText()));
+            now.setText("Number of words is set at : " + nowTF.getText());
+            nowTF.setText("");
+        }else{
+            now.setText("ERROR");
+        }
     }
 
 
@@ -171,5 +157,9 @@ public class SettingsController {
 
     public void show() {
         stage.show();
+    }
+
+    public void setOffline() {
+        offline = true;
     }
 }

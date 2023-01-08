@@ -117,7 +117,7 @@ public class GameController {
 
                     //adding a word
                     if(totalTime%speed == 0){
-                        TextColors textColors = game.addAWord(online);
+                        TextColors textColors = game.addAWord(gameSentence);
                         plusOneWord();
                         if(textColors != null){
                             if(textColors.getColors().equals("blue")) {
@@ -214,24 +214,29 @@ public class GameController {
         }else if(event.getText().equals(""+gameSentence.charAt(currentLetter))){
             currentLetter++;
             badLetterCounter= 0;
-            updateVisualsBecauseIsRight();
+            updateVisualsWithRightLetter();
             isTheGameOverQuestionMark();
         }else if(event.getCode() == KeyCode.BACK_SPACE || event.getCode() == KeyCode.DELETE){
             if(badLetterCounter > 0){
                 badLetterCounter--;
             }
             if(wrongLetterBeforeSpace > 0) {
-                gameSentence = gameSentence.substring(0, currentLetter + badLetterCounter)+ gameSentence.substring(currentLetter + badLetterCounter + 1);
-                wrongLetterBeforeSpace--;
+                gameSentence = gameSentence.substring(0, currentLetter + badLetterCounter) + gameSentence.substring(currentLetter + badLetterCounter + 1);
+                updateVisualsWithWrongLetterOrBackspace(false, true);
+            }else{
+                updateVisualsWithWrongLetterOrBackspace(false, true);
             }
-            updateVisualsBecauseIsWrongOrBackspace();
+
         }else{
             if (("" + gameSentence.charAt(currentLetter + badLetterCounter)).equals("␣")) {
                 gameSentence = gameSentence.substring(0, currentLetter + badLetterCounter) + event.getText() + gameSentence.substring(currentLetter + badLetterCounter);
                 wrongLetterBeforeSpace++;
+                badLetterCounter++;
+                updateVisualsWithWrongLetterOrBackspace(true, false);
+            }else {
+                badLetterCounter++;
+                updateVisualsWithWrongLetterOrBackspace(false, false);
             }
-            badLetterCounter++;
-            updateVisualsBecauseIsWrongOrBackspace();
         }
 
         lives.setText(String.valueOf(game.getLives()));
@@ -247,7 +252,7 @@ public class GameController {
                     restTemplate.exchange(request, Void.class);
                 }
                 if (color.equals("blue")) {
-                    game.addLives(game.getColorsList().get(0).getY());
+                    game.addLives(game.getLengthOfFirstWord());
                 }
             }
         }
@@ -276,27 +281,34 @@ public class GameController {
     }
 
 
-    private void updateVisualsBecauseIsRight() {
-        area.setStyle(0, 0, currentLetter, "-fx-fill: #00FF00");
+    private void updateVisualsWithRightLetter() {
         if(currentLetter < gameSentence.length()) {
             area.setStyle(0, currentLetter, gameSentence.length() - 1, "-fx-fill: #000000");
         }
         updateAllColors(0);
+        area.setStyle(0, 0, currentLetter, "-fx-fill: #00FF00");
         area.displaceCaret(currentLetter);
     }
 
-    private void updateVisualsBecauseIsWrongOrBackspace() {
+    private void updateVisualsWithWrongLetterOrBackspace(boolean newWrongLetter, boolean backSpace) {
         area.replaceText(gameSentence);
+        area.setStyle(0, currentLetter + badLetterCounter, gameSentence.length(), "-fx-fill: #000000");
+        if(newWrongLetter) {
+            updateAllColors(-1);
+        }else if(backSpace && wrongLetterBeforeSpace > 0){
+            updateAllColors(1);
+            wrongLetterBeforeSpace--;
+        }else{
+            updateAllColors(0);
+        }
         area.setStyle(0, 0, currentLetter, "-fx-fill: #00FF00");
         area.setStyle(0, currentLetter, currentLetter + badLetterCounter, "-fx-fill: #FF0000");
-        area.setStyle(0, currentLetter + badLetterCounter, gameSentence.length(), "-fx-fill: #000000");
-        updateAllColors(-wrongLetterBeforeSpace);
         area.displaceCaret(currentLetter+badLetterCounter);
     }
 
 
     private void isTheGameOverQuestionMark(){
-        if(game.getLives() <= 0 || timerLabel.getText().equals("TIME OVER !")){
+        if(currentLetter == gameSentence.length() || game.getLives() <= 0 || timerLabel.getText().equals("TIME OVER !")){
             gameOver();
         }
     }
@@ -305,7 +317,6 @@ public class GameController {
         updateStats();
 
         ReplayController replayController = fxWeaver.loadController(ReplayController.class);
-        replayController.setUser(user);
         if(online){
             replayController.setLastGameWasOnline(opponent.getName(), user.isOpponentLost());
             HttpEntity<String> request =
@@ -314,6 +325,8 @@ public class GameController {
         }
 
         user.setOpponentLost(false);
+        replayController.setUser(user);
+
         //push Stats
         if(!offline) {
             HttpEntity<User> request =
@@ -330,10 +343,11 @@ public class GameController {
     }
 
     public void updateStats(){
-        float l = howLongIsMyGameSupposedToLast - totalTime;
+        float f = 60;
+        float l = (howLongIsMyGameSupposedToLast - totalTime)/f;
         float WPM = (rightCharacterCounter / l) / 5;
         float precision = rightCharacterCounter / keyPressedCounter * 100;
-        int regularity = 0;
+        int regularity = rightCharacterCounter;
 
         user.setStat(WPM, precision, regularity);
     }
