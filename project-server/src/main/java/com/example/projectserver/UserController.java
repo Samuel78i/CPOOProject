@@ -118,8 +118,10 @@ public class UserController {
         if (save.existDeja(name)) {
             User user = save.getUser(name);
             user.setWaitingOnOpponents(true);
-
             User versus = save.getUser(opponentName);
+            save.updateUser(user);
+            save.updateUser(versus);
+            save.output();
             return versus.isWaitingOnOpponents();
         }
         return false;

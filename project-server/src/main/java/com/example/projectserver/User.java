@@ -104,6 +104,8 @@ public final class User implements Serializable {
     }
 
     public void addOpponents(Opponent opponent) {
-        opponents.add(opponent);
+        if(!opponents.contains(opponent)) {
+            opponents.add(opponent);
+        }
     }
 }
