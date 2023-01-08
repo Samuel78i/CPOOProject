@@ -93,4 +93,17 @@ public final class User implements Serializable {
     public boolean isOpponentLost() {
         return opponentLost;
     }
+
+    public boolean opponentsExistAlready(String opponentName) {
+        for(Opponent o: opponents){
+            if(o.getName().equals(opponentName)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addOpponents(Opponent opponent) {
+        opponents.add(opponent);
+    }
 }

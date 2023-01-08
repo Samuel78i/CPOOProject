@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 public class ChooseYourOpponentsController {
     private final FxWeaver fxWeaver;
     private final RestTemplate restTemplate;
+
     @FXML
     public AnchorPane anchor;
     @FXML
@@ -115,11 +116,11 @@ public class ChooseYourOpponentsController {
 
     public void waitingForTheOpponent(Opponent o){
         Boolean isMyOpponentHere = restTemplate.getForObject(
-                url + "/isMyOpponentHere?name={name}&opponent={opponent}", Boolean.class , user.getName(), o);
+                url + "/isMyOpponentHere?name={name}&opponentName={opponentName}", Boolean.class , user.getName(), o.getName());
         while(Boolean.FALSE.equals(isMyOpponentHere)){
             disableEveryButton();
             isMyOpponentHere = restTemplate.getForObject(
-                    url + "/isMyOpponentHere?name={name}&opponent={opponent}", Boolean.class , user.getName(), o);
+                    url + "/isMyOpponentHere?name={name}&opponentName={opponentName}", Boolean.class , user.getName(), o.getName());
         }
         activateEveryButton();
     }

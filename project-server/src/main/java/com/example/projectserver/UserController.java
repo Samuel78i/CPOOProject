@@ -36,22 +36,22 @@ public class UserController {
         return user;
     }
 
-//    @GetMapping("/opponentsExist")
-//    public boolean opponentsExist(@RequestParam String userName, @RequestParam String opponentName) {
-//        UserSave save = UserSave.input();
-//        User user = save.getUser(userName);
-//        return save.existDeja(opponentName) && !user.opponentsExistAlready(opponentName);
-//    }
-//
-//    @GetMapping("/addOpponent")
-//    public Opponent addOpponent(@RequestParam String userName, @RequestParam String opponentName) {
-//        UserSave save = UserSave.input();
-//        User user = save.getUser(userName);
-//        User opponentUser = save.getUser(opponentName);
-//        opponentUser.addOpponents(new Opponent(user.getName(), user.getUserSettings()));
-//        save.output();
-//        return new Opponent(opponentName);
-//    }
+    @GetMapping("/opponentsExist")
+    public boolean opponentsExist(@RequestParam String userName, @RequestParam String opponentName) {
+        UserSave save = UserSave.input();
+        User user = save.getUser(userName);
+        return save.existDeja(opponentName) && !user.opponentsExistAlready(opponentName);
+    }
+
+    @GetMapping("/addOpponent")
+    public Opponent addOpponent(@RequestParam String userName, @RequestParam String opponentName) {
+        UserSave save = UserSave.input();
+        User user = save.getUser(userName);
+        User opponentUser = save.getUser(opponentName);
+        opponentUser.addOpponents(new Opponent(user.getName()));
+        save.output();
+        return new Opponent(opponentName);
+    }
 //
 //    @PostMapping("refreshOpponents")
 //    public void refreshOpponents(@RequestParam String userName, @RequestBody Opponent opponent) {
@@ -78,13 +78,14 @@ public class UserController {
 
 
     @PostMapping("/addAMalusToOpponent")
-    public void addAMalusToOpponent(@RequestParam String userName, @RequestBody Opponent opponent) {
+    public void addAMalusToOpponent(@RequestParam String userName, @RequestBody String opponent) {
         UserSave save = UserSave.input();
         if (save.existDeja(userName)) {
             User user = save.getUser(userName);
-            User versus = save.getUser(opponent.getName());
+            User versus = save.getUser(opponent);
             versus.addAMalus();
             save.updateUser(user);
+            save.updateUser(versus);
             save.output();
         }
     }
@@ -112,13 +113,13 @@ public class UserController {
 
     @GetMapping("/isMyOpponentHere")
     public Boolean isMyOpponentHere(@RequestParam String name,
-                                 @RequestParam Opponent opponent){
+                                 @RequestParam String opponentName){
         UserSave save = UserSave.input();
         if (save.existDeja(name)) {
             User user = save.getUser(name);
             user.setWaitingOnOpponents(true);
 
-            User versus = save.getUser(opponent.getName());
+            User versus = save.getUser(opponentName);
             return versus.isWaitingOnOpponents();
         }
         return false;

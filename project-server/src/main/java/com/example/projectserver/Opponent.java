@@ -17,7 +17,6 @@ public class Opponent implements Serializable {
         score = new ArrayList<>();
     }
 
-
     public Opponent(){
         name = "";
         score = new ArrayList<>();

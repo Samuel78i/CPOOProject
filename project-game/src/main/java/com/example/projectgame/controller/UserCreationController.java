@@ -10,6 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -38,6 +39,7 @@ public class UserCreationController {
     @Value("${url}")
     private String url;
 
+    @Autowired
     public UserCreationController(FxWeaver fxWeaver, RestTemplate restTemplate) {
         this.fxWeaver = fxWeaver;
         this.restTemplate = restTemplate;

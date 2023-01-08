@@ -21,6 +21,7 @@ import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.InlineCssTextArea;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.RequestEntity;
@@ -75,7 +76,7 @@ public class GameController {
 
 
 
-
+    @Autowired
     public GameController(FxWeaver fxWeaver, RestTemplate restTemplate) {
         this.fxWeaver = fxWeaver;
         this.restTemplate = restTemplate;
@@ -248,7 +249,7 @@ public class GameController {
                 String color = game.getColorsList().get(0).getColors();
                 game.getColorsList().remove(0);
                 if (color.equals("pink") && badLetterCounter == 0) {
-                    RequestEntity<Opponent> request = RequestEntity.post(url + "/addAMalusToOpponent?userName={userName}", this.user.getName()).body(this.opponent);
+                    RequestEntity<String> request = RequestEntity.post(url + "/addAMalusToOpponent?userName={userName}", this.user.getName()).body(this.opponent.getName());
                     restTemplate.exchange(request, Void.class);
                 }
                 if (color.equals("blue")) {

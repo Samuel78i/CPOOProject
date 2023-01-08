@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectgame.controller.ChooseYourOpponentsController">
+<AnchorPane  fx:id="anchor" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectgame.controller.ChooseYourOpponentsController">
    <children>
       <Button fx:id="back" layoutY="374.0" mnemonicParsing="false" onAction="#back" text="back" />
       <ListView fx:id="opponentsList" layoutX="52.0" layoutY="100.0" prefHeight="200.0" prefWidth="200.0" />
