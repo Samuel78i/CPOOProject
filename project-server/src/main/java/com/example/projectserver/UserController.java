@@ -16,6 +16,7 @@ public class UserController {
             if (!user.getPassword().equals(password)) {
                 return null;
             } else {
+                user.setWaitingOnOpponents(false);
                 return user;
             }
         }
