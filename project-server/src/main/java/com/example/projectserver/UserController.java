@@ -17,6 +17,8 @@ public class UserController {
                 return null;
             } else {
                 user.setWaitingOnOpponents(false);
+                save.updateUser(user);
+                save.output();
                 return user;
             }
         }
@@ -69,10 +71,10 @@ public class UserController {
 //    }
 
     @GetMapping("/refreshUser")
-    public User refreshUser(@RequestParam String username) {
+    public User refreshUser(@RequestParam String name) {
         UserSave save = UserSave.input();
-        if (save.existDeja(username)) {
-            return save.getUser(username);
+        if (save.existDeja(name)) {
+            return save.getUser(name);
         }
         return null;
     }
