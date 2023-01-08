@@ -43,7 +43,7 @@ public class UserController {
     public boolean opponentsExist(@RequestParam String userName, @RequestParam String opponentName) {
         UserSave save = UserSave.input();
         User user = save.getUser(userName);
-        return save.existDeja(opponentName) && !user.opponentsExistAlready(opponentName);
+        return save.existDeja(opponentName) && user.opponentsExistAlready(opponentName);
     }
 
     @GetMapping("/addOpponent")

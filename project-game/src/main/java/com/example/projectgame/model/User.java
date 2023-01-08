@@ -22,10 +22,20 @@ public class User {
         settings = new Settings();
     }
 
-    public void addOpponents(Opponent o){
-        opponents.add(o);
+    public void addOpponents(Opponent opponent) {
+        if(!opponentsExistAlready(opponent.getName())) {
+            opponents.add(opponent);
+        }
     }
 
+    public boolean opponentsExistAlready(String opponentName) {
+        for(Opponent o: opponents){
+            if(o.getName().equals(opponentName)){
+                return false;
+            }
+        }
+        return true;
+    }
     public String getName() {
         return name;
     }

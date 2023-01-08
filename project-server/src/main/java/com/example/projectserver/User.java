@@ -97,14 +97,14 @@ public final class User implements Serializable {
     public boolean opponentsExistAlready(String opponentName) {
         for(Opponent o: opponents){
             if(o.getName().equals(opponentName)){
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public void addOpponents(Opponent opponent) {
-        if(!opponentsExistAlready(opponent.getName())) {
+        if(opponentsExistAlready(opponent.getName())) {
             opponents.add(opponent);
         }
     }

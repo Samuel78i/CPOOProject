@@ -103,6 +103,8 @@ public class ChooseYourOpponentsController {
 
             waitingForTheOpponent(opponent);
 
+            user.addOpponents(opponent);
+
             GameController gameController = fxWeaver.loadController(GameController.class);
             user.setWaitingOnOpponents(false);
             gameController.setUser(user);

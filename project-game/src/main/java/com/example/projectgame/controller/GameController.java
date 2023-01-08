@@ -44,7 +44,7 @@ public class GameController {
     private User user;
     private boolean online = false;
     private boolean offline = false;
-
+    private boolean stop = false;
 
 
     @FXML
@@ -164,6 +164,8 @@ public class GameController {
             for(int i = currentLetter + badLetterCounter; i < gameSentence.length(); i++){
                 if(!(""+gameSentence.charAt(i)).equals("␣")){
                     badLetterCounter++;
+                }else{
+                    break;
                 }
             }
             validateAWord();
@@ -211,13 +213,17 @@ public class GameController {
     protected void keyReleased(KeyEvent event) {
         keyPressedCounter++;
         if(event.getText().equals("\u0020") && (""+gameSentence.charAt(currentLetter + badLetterCounter)).equals("␣")){
+            //Key space pressed at the right time
             validateAWord();
         }else if(event.getText().equals(""+gameSentence.charAt(currentLetter))){
+            //Good letter pressed
             currentLetter++;
             badLetterCounter= 0;
             updateVisualsWithRightLetter();
             isTheGameOverQuestionMark();
         }else if(event.getCode() == KeyCode.BACK_SPACE || event.getCode() == KeyCode.DELETE){
+            //Backspace
+
             if(badLetterCounter > 0){
                 badLetterCounter--;
             }
@@ -230,6 +236,7 @@ public class GameController {
 
         }else{
             if (("" + gameSentence.charAt(currentLetter + badLetterCounter)).equals("␣")) {
+                //adding letter after the words when he's wrong
                 gameSentence = gameSentence.substring(0, currentLetter + badLetterCounter) + event.getText() + gameSentence.substring(currentLetter + badLetterCounter);
                 wrongLetterBeforeSpace++;
                 badLetterCounter++;
@@ -246,12 +253,15 @@ public class GameController {
     public void wasTheWordValidateAHealOrMalus(int badLetterCounter){
         if(!game.getColorsList().isEmpty()) {
             if (game.getColorsList().get(0).getX() == 0) {
+
                 String color = game.getColorsList().get(0).getColors();
                 game.getColorsList().remove(0);
+
                 if (color.equals("pink") && badLetterCounter == 0) {
                     RequestEntity<String> request = RequestEntity.post(url + "/addAMalusToOpponent?userName={userName}", this.user.getName()).body(this.opponent.getName());
                     restTemplate.exchange(request, Void.class);
                 }
+
                 if (color.equals("blue")) {
                     game.addLives(game.getLengthOfFirstWord());
                 }
@@ -315,32 +325,35 @@ public class GameController {
     }
 
     public void gameOver(){
-        updateStats();
+        if(!stop) {
+            stop = true;
+            updateStats();
 
-        ReplayController replayController = fxWeaver.loadController(ReplayController.class);
-        if(online){
-            replayController.setLastGameWasOnline(opponent.getName(), user.isOpponentLost());
-            HttpEntity<String> request =
-                    new HttpEntity<>(opponent.getName(), null);
-            restTemplate.postForObject(url + "/userLost", request, String.class);
+            ReplayController replayController = fxWeaver.loadController(ReplayController.class);
+            if (online) {
+                replayController.setLastGameWasOnline(opponent.getName(), user.isOpponentLost());
+                HttpEntity<String> request =
+                        new HttpEntity<>(opponent.getName(), null);
+                restTemplate.postForObject(url + "/userLost", request, String.class);
+            }
+
+            user.setOpponentLost(false);
+            replayController.setUser(user);
+
+            //push Stats
+            if (!offline) {
+                HttpEntity<User> request =
+                        new HttpEntity<>(user, null);
+                restTemplate.postForObject(url + "/addScore", request, User.class);
+            }
+
+            replayController.show();
+
+            timerCanceled = true;
+            time.cancel();
+
+            stage.close();
         }
-
-        user.setOpponentLost(false);
-        replayController.setUser(user);
-
-        //push Stats
-        if(!offline) {
-            HttpEntity<User> request =
-                    new HttpEntity<>(user, null);
-            restTemplate.postForObject(url + "/addScore", request, User.class);
-        }
-
-        replayController.show();
-
-        timerCanceled = true;
-        time.cancel();
-
-        stage.close();
     }
 
     public void updateStats(){
