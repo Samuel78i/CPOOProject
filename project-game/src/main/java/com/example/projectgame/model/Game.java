@@ -84,7 +84,7 @@ public class Game {
         sentence = sentence.substring(currentLetter + badLetterCounter);
     }
 
-    public TextColors addAWord(String gameSentence){
+    public TextColors addAWord(String gameSentence, boolean online){
         sentence = gameSentence;
         int randomNum = ThreadLocalRandom.current().nextInt(0, dico.size() + 1);
         int x = sentence.length() +1;
@@ -93,11 +93,18 @@ public class Game {
         sentence += "␣" + wordFromDico;
 
         Random r = new Random();
-        int i = r.nextInt(2);
+        int i = r.nextInt(3);
         if (i == 0) {
             TextColors t = new TextColors(x, y, "blue");
             colorsList.add(t);
             return t;
+        }
+        if(online) {
+            if (i == 1) {
+                TextColors t = new TextColors(x, y, "pink");
+                colorsList.add(t);
+                return t;
+            }
         }
         return null;
     }
